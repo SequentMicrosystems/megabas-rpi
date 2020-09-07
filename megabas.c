@@ -20,7 +20,7 @@
 
 #define VERSION_BASE	(int)1
 #define VERSION_MAJOR	(int)2
-#define VERSION_MINOR	(int)1
+#define VERSION_MINOR	(int)2
 
 #define UNUSED(X) (void)X      /* To avoid gcc/g++ warnings */
 
@@ -580,7 +580,7 @@ const CliCmdType CMD_TEST =
 	"trtest",
 	2,
 	&doTriacTest,
-	"\ttrtest:	Turn ON and OFF the triacs until press a key\n",
+	"\ttrtest:		Turn ON and OFF the triacs until press a key\n",
 	"\tUsage:		megabas <id> trtest\n",
 	"",
 	"\tExample:		megabas 0 trtest\n"};
@@ -771,6 +771,162 @@ int contactGet(int dev, int* val)
 	return OK;
 }
 
+int contactCountGet(int dev, u8 ch, u32* val)
+{
+	u8 buff[4];
+
+	if (NULL == val)
+	{
+		return ERROR;
+	}
+	if ( (ch < CHANNEL_NR_MIN) || (ch > CONTACT_CH_NR_MAX))
+	{
+		printf("Invalid DRY CONTACT nr!\n");
+		return ERROR;
+	}
+	if (FAIL
+		== i2cMem8Read(dev, I2C_MEM_DRY_CONTACT_CONTORS + 4 * (ch - 1), buff, 4))
+	{
+		return ERROR;
+	}
+	memcpy(val, buff, 4);
+	return OK;
+}
+
+int contactCountReset(int dev, u8 channel)
+{
+	u8 buff[4];
+
+	if ( (channel < CHANNEL_NR_MIN) || (channel > CONTACT_CH_NR_MAX))
+	{
+		printf("Invalid DRY CONTACT nr!\n");
+		return ERROR;
+	}
+	buff[0] = channel;
+	if (FAIL == i2cMem8Write(dev, I2C_MEM_DRY_CONTACT_CH_CONT_RESET, buff, 1))
+	{
+		printf("Fail to reset contor! \n");
+		return ERROR;
+	}
+	return OK;
+}
+
+int contactCountRisingSet(int dev, u8 channel, u8 state)
+{
+	u8 buff[4];
+
+	if ( (channel < CHANNEL_NR_MIN) || (channel > CONTACT_CH_NR_MAX))
+	{
+		printf("Invalid DRY CONTACT nr!\n");
+		return ERROR;
+	}
+
+	if (FAIL == i2cMem8Read(dev, I2C_MEM_DRY_CONTACT_RISING_ENABLE, buff, 1))
+	{
+		return ERROR;
+	}
+	if (state != 0)
+	{
+		buff[0] |= 1 << (channel - 1);
+	}
+	else
+	{
+		buff[0] &= ~ (1 << (channel - 1));
+	}
+	if (FAIL == i2cMem8Write(dev, I2C_MEM_DRY_CONTACT_RISING_ENABLE, buff, 1))
+	{
+		return ERROR;
+	}
+	return OK;
+}
+
+int contactCountFallingSet(int dev, u8 channel, u8 state)
+{
+	u8 buff[4];
+
+	if ( (channel < CHANNEL_NR_MIN) || (channel > CONTACT_CH_NR_MAX))
+	{
+		printf("Invalid DRY CONTACT nr!\n");
+		return ERROR;
+	}
+
+	if (FAIL == i2cMem8Read(dev, I2C_MEM_DRY_CONTACT_FALLING_ENABLE, buff, 1))
+	{
+		return ERROR;
+	}
+	if (state != 0)
+	{
+		buff[0] |= 1 << (channel - 1);
+	}
+	else
+	{
+		buff[0] &= ~ (1 << (channel - 1));
+	}
+	if (FAIL == i2cMem8Write(dev, I2C_MEM_DRY_CONTACT_FALLING_ENABLE, buff, 1))
+	{
+		return ERROR;
+	}
+	return OK;
+}
+
+int contactCountRisingGet(int dev, u8 channel, u8* state)
+{
+	u8 buff[4];
+
+	if (NULL == state)
+	{
+		return ERROR;
+	}
+	if ( (channel < CHANNEL_NR_MIN) || (channel > CONTACT_CH_NR_MAX))
+	{
+		printf("Invalid DRY CONTACT nr!\n");
+		return ERROR;
+	}
+
+	if (FAIL == i2cMem8Read(dev, I2C_MEM_DRY_CONTACT_RISING_ENABLE, buff, 1))
+	{
+		return ERROR;
+	}
+	if ( (buff[0] & (1 << (channel - 1))) != 0)
+	{
+		*state = 1;
+	}
+	else
+	{
+		*state = 0;
+	}
+	return OK;
+}
+
+int contactCountFallingGet(int dev, u8 channel, u8* state)
+{
+	u8 buff[4];
+
+	if (NULL == state)
+	{
+		return ERROR;
+	}
+	if ( (channel < CHANNEL_NR_MIN) || (channel > CONTACT_CH_NR_MAX))
+	{
+		printf("Invalid DRY CONTACT nr!\n");
+		return ERROR;
+	}
+
+	if (FAIL == i2cMem8Read(dev, I2C_MEM_DRY_CONTACT_FALLING_ENABLE, buff, 1))
+	{
+		return ERROR;
+	}
+	if ( (buff[0] & (1 << (channel - 1))) != 0)
+	{
+		*state = 1;
+	}
+	else
+	{
+		*state = 0;
+	}
+	return OK;
+}
+
 static void doContactRead(int argc, char *argv[]);
 const CliCmdType CMD_CONTACT_READ =
 	{
@@ -831,6 +987,190 @@ static void doContactRead(int argc, char *argv[])
 	{
 		printf("%s", CMD_CONTACT_READ.usage1);
 		printf("%s", CMD_CONTACT_READ.usage2);
+		exit(1);
+	}
+}
+
+static void doCountRead(int argc, char *argv[]);
+const CliCmdType CMD_COUNTER_READ =
+	{
+		"countrd",
+		2,
+		&doCountRead,
+		"\tcountrd:	Read dry contact transitions count\n\t\t\tWarning: For this measurements to be valid place the jumper in position \"1K\" \n",
+		"\tUsage:		megabas <id> countrd <channel>\n",
+		"",
+		"\tExample:		megabas 0 countrd 2; Read transitions count of dry contact pin #2 on Board #0\n"};
+
+static void doCountRead(int argc, char *argv[])
+{
+	u8 pin = 0;
+	u32 val = 0;
+	int dev = 0;
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 4)
+	{
+		pin = (u8)atoi(argv[3]);
+
+		if (OK != contactCountGet(dev, pin, &val))
+		{
+			printf("Fail to read!\n");
+			exit(1);
+		}
+		printf("%u\n", (unsigned int)val);
+	}
+	else
+	{
+		printf("%s", CMD_COUNTER_READ.usage1);
+		exit(1);
+	}
+}
+
+static void doCountReset(int argc, char *argv[]);
+const CliCmdType CMD_COUNTER_RST =
+	{
+		"countrst",
+		2,
+		&doCountReset,
+		"\tcountrst:	Reset dry contact transitions count\n",
+		"\tUsage:		megabas <id> countrst <channel>\n",
+		"",
+		"\tExample:		megabas 0 countrst 2; Reset transitions count of dry contact pin #2 on Board #0\n"};
+
+static void doCountReset(int argc, char *argv[])
+{
+	u8 pin = 0;
+	int dev = 0;
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 4)
+	{
+		pin = (u8)atoi(argv[3]);
+
+		if (OK != contactCountReset(dev, pin))
+		{
+			printf("Fail to read!\n");
+			exit(1);
+		}
+		printf("done\n");
+	}
+	else
+	{
+		printf("%s", CMD_COUNTER_RST.usage1);
+		exit(1);
+	}
+}
+
+static void doEdgeRead(int argc, char *argv[]);
+const CliCmdType CMD_EDGE_READ =
+	{
+		"edgerd",
+		2,
+		&doEdgeRead,
+		"\tedgerd:		Read dry contact transitions type, ret 0 - disable, 1 - rising, 2 - falling, 3 - both\n",
+		"\tUsage:		megabas <id> edgerd <channel> \n",
+		"",
+		"\tExample:		megabas 0 edgerd 2; Read transitions type of dry contact pin #2 on Board #0\n"};
+
+static void doEdgeRead(int argc, char *argv[])
+{
+	u8 pin = 0;
+	u8 rising = 0;
+	u8 falling = 0;
+	int dev = 0;
+	
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 4)
+	{
+		pin = (u8)atoi(argv[3]);
+
+		if (OK != contactCountRisingGet(dev, pin, &rising))
+		{
+			printf("Fail to read!\n");
+			exit(1);
+		}
+		if (OK != contactCountFallingGet(dev, pin, &falling))
+		{
+			printf("Fail to read!\n");
+			exit(1);
+		}
+		printf("%d\n", (int)(rising + falling * 2));
+	}
+	else
+	{
+		printf("%s", CMD_EDGE_READ.usage1);
+		exit(1);
+	}
+}
+
+static void doEdgeWrite(int argc, char *argv[]);
+const CliCmdType CMD_EDGE_WRITE =
+	{
+		"edgewr",
+		2,
+		&doEdgeWrite,
+		"\tedgewr:		Write dry contact transitions type: 0 - disable, 1 - rising, 2 - falling, 3 - both\n",
+		"\tUsage:		megabas <id> edgewr <channel> <val>\n",
+		"",
+		"\tExample:		megabas 0 edgewr 2 1; Set transitions type of dry contact pin #2 on Board #0 to rising\n"};
+
+static void doEdgeWrite(int argc, char *argv[])
+{
+	u8 pin = 0;
+	u8 rising = 0;
+	u8 falling = 0;
+	int dev = 0;
+	
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 5)
+	{
+		pin = (u8)atoi(argv[3]);
+		
+		if((1 & atoi(argv[4])) != 0)
+		{
+			rising = 1;
+		}
+		if((2 & atoi(argv[4])) != 0)
+				{
+					falling = 1;
+				}
+		if (OK != contactCountRisingSet(dev, pin, rising))
+		{
+			printf("Fail to write!\n");
+			exit(1);
+		}
+		if (OK != contactCountFallingSet(dev, pin, falling))
+		{
+			printf("Fail to write!\n");
+			exit(1);
+		}
+		
+	}
+	else
+	{
+		printf("%s", CMD_EDGE_WRITE.usage1);
 		exit(1);
 	}
 }
@@ -1870,7 +2210,7 @@ static void doRs485Read(int argc, char *argv[])
 
 	if (argc == 3)
 	{
-		if(OK != rs485Get(dev))
+		if (OK != rs485Get(dev))
 		{
 			exit(1);
 		}
@@ -1884,14 +2224,14 @@ static void doRs485Read(int argc, char *argv[])
 
 static void doRs485Write(int argc, char *argv[]);
 const CliCmdType CMD_RS485_WRITE =
-{
-	"rs485wr",
-	2,
-	&doRs485Write,
-	"\trs485wr:	Write the RS485 communication settings\n",
-	"\tUsage:		megabas <id> rs485wr <mode> <baudrate> <stopBits> <parity> <slaveAddr>\n",
-	"",
-	"\tExample:		megabas 0 rs485wr 1 9600 1 0 1; Write the RS485 settings on Board #0 \n\t\t\t(mode = Modbus RTU; baudrate = 9600 bps; stop bits one; parity none; modbus slave address = 1)\n"};
+	{
+		"rs485wr",
+		2,
+		&doRs485Write,
+		"\trs485wr:	Write the RS485 communication settings\n",
+		"\tUsage:		megabas <id> rs485wr <mode> <baudrate> <stopBits> <parity> <slaveAddr>\n",
+		"",
+		"\tExample:		megabas 0 rs485wr 1 9600 1 0 1; Write the RS485 settings on Board #0 \n\t\t\t(mode = Modbus RTU; baudrate = 9600 bps; stop bits one; parity none; modbus slave address = 1)\n"};
 
 static void doRs485Write(int argc, char *argv[])
 {
@@ -1914,8 +2254,8 @@ static void doRs485Write(int argc, char *argv[])
 		baud = atoi(argv[4]);
 		stopB = 0xff & atoi(argv[5]);
 		parity = 0xff & atoi(argv[6]);
-		add = 0xff & atoi(argv[7]); 
-		if(OK != rs485Set(dev, mode, baud, stopB, parity, add))
+		add = 0xff & atoi(argv[7]);
+		if (OK != rs485Set(dev, mode, baud, stopB, parity, add))
 		{
 			exit(1);
 		}
@@ -1928,7 +2268,6 @@ static void doRs485Write(int argc, char *argv[])
 	}
 }
 
-
 const CliCmdType* gCmdArray[] =
 {
 	&CMD_VERSION,
@@ -1940,6 +2279,10 @@ const CliCmdType* gCmdArray[] =
 	&CMD_TRIAC_READ,
 	&CMD_TEST,
 	&CMD_CONTACT_READ,
+	&CMD_COUNTER_READ,
+	&CMD_COUNTER_RST,
+	&CMD_EDGE_READ,
+	&CMD_EDGE_WRITE,
 	&CMD_DAC_READ,
 	&CMD_DAC_WRITE,
 	&CMD_ADC_READ,
