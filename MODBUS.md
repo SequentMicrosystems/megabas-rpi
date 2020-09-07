@@ -27,7 +27,7 @@ Acces level Read/Write, Size 1 bit
 
 | Device function | Register Address | Modbus Address |
 | --- | --- | --- |
-| TTIAC_1 | 0001 | 0x00 |
+| TRIAC_1 | 0001 | 0x00 |
 | TRIAC_2 | 0002 | 0x01 |
 | TRIAC_3 | 0003 | 0x02 |
 | TRIAC_4 | 0004 | 0x03 |
@@ -69,14 +69,14 @@ Access level Read Only, Size 16 bits
 | 1K_R_IN_6 | 30014 | 0x0d | ohm |
 | 1K_R_IN_7 | 30015 | 0x0e | ohm |
 | 1K_R_IN_8 | 30016 | 0x0f | ohm |
-| 10K_R_IN_1 | 30017 | 0x08 | ohm |
-| 10K_R_IN_2 | 30018 | 0x09 | ohm |
-| 10K_R_IN_3 | 30019 | 0x0a | ohm |
-| 10K_R_IN_4 | 30020 | 0x0b | ohm |
-| 10K_R_IN_5 | 30021 | 0x0c | ohm |
-| 10K_R_IN_6 | 30022 | 0x0d | ohm |
-| 10K_R_IN_7 | 30023 | 0x0e | ohm |
-| 10K_R_IN_8 | 30024 | 0x0f | ohm |
+| 10K_R_IN_1 | 30017 | 0x10 | ohm |
+| 10K_R_IN_2 | 30018 | 0x11 | ohm |
+| 10K_R_IN_3 | 30019 | 0x12 | ohm |
+| 10K_R_IN_4 | 30020 | 0x13 | ohm |
+| 10K_R_IN_5 | 30021 | 0x14 | ohm |
+| 10K_R_IN_6 | 30022 | 0x15 | ohm |
+| 10K_R_IN_7 | 30023 | 0x16 | ohm |
+| 10K_R_IN_8 | 30024 | 0x17 | ohm |
 
 ### Holding registers
 
