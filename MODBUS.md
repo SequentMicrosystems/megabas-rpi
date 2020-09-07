@@ -9,7 +9,7 @@ Example:
 ```bash
 ~$ megabas 0 rs485wr 1 9600 1 0 1
 ```
-Set Modbus RTU , Baudrate: 9600bps, 1 Stop Bit,  parity: None, slave address offset
+Set Modbus RTU , Baudrate: 9600bps, 1 Stop Bit,  parity: None, slave address offset: 1
 ```bash
 ~$ megabas -h rs485wr
 ```
