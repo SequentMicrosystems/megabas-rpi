@@ -1,4 +1,4 @@
-[![megabas-rpi](readmeres/sequent.jpg)](https://www.sequentmicrosystems.com/megaio-ind.html)
+[![megabas-rpi](readmeres/sequent.jpg)](https://sequentmicrosystems.com/index.php?route=product/product&path=33&product_id=65)
 
 # Modbus
 
