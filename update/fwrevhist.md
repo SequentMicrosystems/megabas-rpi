@@ -11,3 +11,6 @@ Add watchdog functionality.
 Add RS485 settings
 
 Add dry contact contors
+
+## 1.04
+RTC routines 
