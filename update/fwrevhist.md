@@ -14,3 +14,8 @@ Add dry contact contors
 
 ## 1.04
 RTC routines 
+
+## 1.05
+Modbus access on dry contact counters and edge selection
+Minor Modbus debug
+
