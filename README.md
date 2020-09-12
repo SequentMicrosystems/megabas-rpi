@@ -33,4 +33,4 @@ If you clone the repository any update can be made with the following commands:
 ~/megabas-rpi$ git pull
 ~/megabas-rpi$ sudo make install
 ```  
-Checkout update/ subfolder for firmware update.
+Checkout firmware update instructions [UPDATE](update/README.md).
