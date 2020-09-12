@@ -33,4 +33,6 @@ If you clone the repository any update can be made with the following commands:
 ~/megabas-rpi$ git pull
 ~/megabas-rpi$ sudo make install
 ```  
-Checkout firmware update instructions [UPDATE](update/README.md).
+Checkout [firmware update instructions](update/README.md).
+
+The board can act as Modbus RTU slave device, checkout [modbus instructions](MODBUS.md)
