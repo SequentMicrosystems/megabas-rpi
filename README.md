@@ -33,8 +33,10 @@ If you clone the repository any update can be made with the following commands:
 ~/megabas-rpi$ git pull
 ~/megabas-rpi$ sudo make install
 ```  
-Checkout [Python Library](python/README.md)
+[Python Library](python/README.md)
 
-Checkout [firmware update instructions](update/README.md).
+[Firmware update instructions](update/README.md).
+
+[Node-RED](https://github.com/SequentMicrosystems/megabas-rpi/tree/master/node-red-contrib-sm-bas)
 
 The board can act as Modbus RTU slave device, checkout [modbus instructions](MODBUS.md)
