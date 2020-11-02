@@ -39,4 +39,6 @@ If you clone the repository any update can be made with the following commands:
 
 [Node-RED](https://github.com/SequentMicrosystems/megabas-rpi/tree/master/node-red-contrib-sm-bas)
 
+[CODESYS Driver](https://github.com/SequentMicrosystems/megabas-rpi/tree/master/CODESYS)
+
 The board can act as Modbus RTU slave device, checkout [modbus instructions](MODBUS.md)
