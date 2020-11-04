@@ -1,6 +1,6 @@
  # CODESYS Driver
 
-This is the Codesys driver for the [Building Automation Card](https://sequentmicrosystems.com/index.php?route=product/product&path=33&product_id=65)
+This is the Codesys driver for the [Building Automation Card](https://sequentmicrosystems.com/product/building-automation-stackable-card-for-raspberry-pi/)
 
 We include the source code library in the package so everyone can modify. Note that it is an open source library with absolutely no warranty.
 Checkout our example project for guidance.
