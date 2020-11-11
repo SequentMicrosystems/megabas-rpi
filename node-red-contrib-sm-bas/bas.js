@@ -612,7 +612,7 @@ module.exports = function(RED) {
                         node.error(err, msg);
                     } 
                     else{
-                        if (res & (1 << (channel - 1)) != 0) {
+                        if ((res & (1 << (channel - 1))) != 0) {
                           msg.payload = true;
                         }
                         else{
