@@ -1,5 +1,5 @@
 
-[![megabas-rpi](res/sequent.jpg)](https://sequentmicrosystems.com/index.php?route=product/product&path=20&product_id=65)
+[![megabas-rpi](res/sequent.jpg)](https://sequentmicrosystems.com)
 
 # megabas
 
