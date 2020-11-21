@@ -2,7 +2,7 @@
 
 # Modbus
 
-The [Building](https://sequentmicrosystems.com/index.php?route=product/product&path=33&product_id=65) Automation I/O Expansion cards for Raspberry Pi can be accessed thru Modbus RTU protocol over RS-485 port.
+The [Building](https://sequentmicrosystems.com/product/raspberry-pi-building-automation/) Automation I/O Expansion cards for Raspberry Pi can be accessed thru Modbus RTU protocol over RS-485 port.
 You can set-up the RS-485 port with **megabas** command.
 
 Example:
