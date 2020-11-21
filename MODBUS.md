@@ -1,4 +1,4 @@
-[![megabas-rpi](res/sequent.jpg)](https://sequentmicrosystems.com/index.php?route=product/product&path=33&product_id=65)
+[![megabas-rpi](res/sequent.jpg)](https://sequentmicrosystems.com)
 
 # Modbus
 
