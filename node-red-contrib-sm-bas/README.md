@@ -1,6 +1,6 @@
 # node-red-contrib-sm-bas
 
-This is the node-red node to control Sequent Microsystems [Building Automation Stackable Card for Raspberry Pi](https://sequentmicrosystems.com/product/building-automation-stackable-card-for-raspberry-pi/).
+This is the node-red node to control Sequent Microsystems [Building Automation Stackable Card for Raspberry Pi](https://sequentmicrosystems.com/product/raspberry-pi-building-automation/).
 
 ## Install
 
