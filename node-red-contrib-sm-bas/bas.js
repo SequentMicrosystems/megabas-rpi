@@ -28,9 +28,9 @@ module.exports = function(RED) {
         node.on("input", function(msg) {
             var myPayload;
             var stack = node.stack;//|| msg.stack; 
-           
-            var channel = node.channel || msg.channel;
-            //if (isNaN(channel)) channel = msg.channel;
+            if (isNaN(stack)) stack = msg.stack;
+            var channel = node.channel;// || msg.channel;
+            if (isNaN(channel)) channel = msg.channel;
             stack = parseInt(stack);
             channel = parseInt(channel);
             
@@ -65,8 +65,8 @@ module.exports = function(RED) {
                 if(channel < 1){
                   channel = 1;
                 }
-                if(channel > 8){
-                  channel = 8;
+                if(channel > 4){
+                  channel = 4;
                 }
                
                 if (myPayload == null || myPayload == false || myPayload == 0 || myPayload == 'off') {
