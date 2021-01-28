@@ -92,7 +92,8 @@ CONTACT_CH_MAX = 8
 R_IN_CH_MAX = 8
 TRIAC_CH_MAX = 4
 HW_ADD = 0x48
-WDT_MAX_POWER_OFF_INTERVAL = 4147200  #48 days
+WDT_MAX_POWER_OFF_INTERVAL = 4147200  # 48 days
+
 
 def c2(val):
     if val > 32768:
@@ -256,7 +257,7 @@ def getContactCountEdge(stack, ch):
         bus.close()
         raise Error(e)
     bus.close()
-    val = 0;
+    val = 0
     if (rising & (1 << (ch - 1))) != 0:
         val += 1
     if (falling & (1 << (ch - 1))) != 0:
@@ -391,7 +392,7 @@ def wdtGetDefaultPeriod(stack):
 def wdtSetOffInterval(stack, val):
     ret = 1
     checkStack(stack)
-    if 10 > val or val >  WDT_MAX_POWER_OFF_INTERVAL:
+    if 10 > val or val > WDT_MAX_POWER_OFF_INTERVAL:
         raise ValueError('Invalid interval value [2..4147200]')
     bus = smbus.SMBus(1)
     buff = [0, 0, 0, 0]
