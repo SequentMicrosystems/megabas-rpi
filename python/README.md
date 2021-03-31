@@ -3,7 +3,7 @@
 
 # megabas
 
-This is the python library to control the [ Building Automation Card for Raspberry Pi.](https://sequentmicrosystems.com/product/raspberry-pi-building-automation/) 
+This is the python library to control the [ Building Automation Card for Raspberry Pi.](https://sequentmicrosystems.com/products/raspberry-pi-building-automation) 
 
 ## Install
 
