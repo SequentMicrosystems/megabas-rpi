@@ -14,7 +14,7 @@ For Ubuntu users do the following:
 ```bash
 ~$ git clone https://github.com/SequentMicrosystems/megabas-rpi.git
 ~$ cd megabas-rpi/update/ubuntu/
-~/megabas-rpi/update/ubuntu$ ./update 0
+~/megabas-rpi/update/ubuntu$ sudo ./update 0
 ```
 
 If you clone the repository already, skip the first step. 
