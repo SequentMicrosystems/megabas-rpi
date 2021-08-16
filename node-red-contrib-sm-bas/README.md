@@ -2,7 +2,7 @@
 
 This is the node-red node to control Sequent Microsystems [Building Automation Stackable Card for Raspberry Pi](https://sequentmicrosystems.com/products/raspberry-pi-building-automation).
 
-## Install
+## Manual Install
 
 Clone or update the repository, follow the instrutions fron the [first page.](https://github.com/SequentMicrosystems/megabas-rpi)
 
