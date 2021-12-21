@@ -2275,9 +2275,9 @@ const CliCmdType CMD_RTC_GET =
 		2,
 		&doRTCGet,
 		"\trtcrd:		Get the internal RTC  date and time(mm/dd/yy hh:mm:ss)\n",
-		"\tUsage:		megaind <id> rtcrd \n",
+		"\tUsage:		megbas <id> rtcrd \n",
 		"",
-		"\tExample:	megaind 0 rtcrd; Get the nternal RTC time and date on Board #0\n"};
+		"\tExample:	megabas 0 rtcrd; Get the nternal RTC time and date on Board #0\n"};
 
 static void doRTCGet(int argc, char *argv[])
 {
@@ -2315,9 +2315,9 @@ const CliCmdType CMD_RTC_SET =
 		2,
 		&doRTCSet,
 		"\trtcwr:		Set the internal RTC  date and time(mm/dd/yy hh:mm:ss)\n",
-		"\tUsage:		megaind <id> rtcwr <mm> <dd> <yy> <hh> <mm> <ss> \n",
+		"\tUsage:		megabas <id> rtcwr <mm> <dd> <yy> <hh> <mm> <ss> \n",
 		"",
-		"\tExample:	megaind 0 rtcwr 9 15 20 21 43 15; Set the internal RTC time and date on Board #0 at Sept/15/2020  21:43:15\n"};
+		"\tExample:	megabas 0 rtcwr 9 15 20 21 43 15; Set the internal RTC time and date on Board #0 at Sept/15/2020  21:43:15\n"};
 
 static void doRTCSet(int argc, char *argv[])
 {
