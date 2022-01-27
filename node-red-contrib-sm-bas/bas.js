@@ -265,7 +265,7 @@ module.exports = function(RED) {
         this.payload = n.payload;
         this.payloadType = n.payloadType;
         var node = this;
-        var buffer = Buffer.alloc(2);
+        var buffer = Buffer.alloc(4);
         
         node.port = I2C.openSync( 1 );
         node.on("input", function(msg) {
@@ -315,7 +315,7 @@ module.exports = function(RED) {
                         node.error(err, msg);
                     } 
                     else{
-                        msg.payload = res.readIntLE(0, 2) / 1000.0;                       
+                        msg.payload = res.readIntLE(0, 4) / 1000.0;                       
                         node.send(msg);
                     }
                     });     
@@ -340,7 +340,7 @@ module.exports = function(RED) {
         this.payload = n.payload;
         this.payloadType = n.payloadType;
         var node = this;
-        var buffer = Buffer.alloc(2);
+        var buffer = Buffer.alloc(4);
         
         node.port = I2C.openSync( 1 );
         node.on("input", function(msg) {
@@ -390,7 +390,7 @@ module.exports = function(RED) {
                         node.error(err, msg);
                     } 
                     else{
-                        msg.payload = res.readIntLE(0, 2) / 1000.0;                       
+                        msg.payload = res.readIntLE(0, 4) / 1000.0;                       
                         node.send(msg);
                     }
                     });     
