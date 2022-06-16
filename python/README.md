@@ -14,6 +14,15 @@ This is the python library to control the [ Building Automation Card for Raspber
 ~$ cd megabas-rpi/python/megabas/
 ~/megabas-rpi/python/megabas$ sudo python setup.py install
 ```
+For Python3.X:
+```
+~$ sudo apt-get update
+~$ sudo apt-get install build-essential python3-pip python3-dev python3-smbus git
+~$ git clone https://github.com/SequentMicrosystems/megabas-rpi.git
+~$ cd megabas-rpi/python/
+~/megabas-rpi/python$ sudo python3 setup.py install
+```
+
 ## Update
 
 ```bash
@@ -22,7 +31,11 @@ This is the python library to control the [ Building Automation Card for Raspber
 ~$ cd megabas-rpi/python/megabas/
 ~/megabas-rpi/python/megabas$ sudo python setup.py install
 ```
-
+For Python3.X:
+Replace the last line with
+```
+~/megabas-rpi/python/megabas$ sudo python3 setup.py install
+```
 ## Usage 
 
 Now you can import the megaio library and use its functions. To test, read triacs status from the MegaIO IND board with stack level 0:
