@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="megabas",
-    version="1.0.0",
+    version="1.0.1",
     author="Sequent Microsystems",
-    author_email="olcit@gmail.com",
+    author_email="olcitu@gmail.com",
     description="A set of functions to control Sequent Microsystems Building Automation Card for Raspberry Pi",
 	license='MIT',
-    url="https://sequentmicrosystems.com/index.php?route=product/product&path=20&product_id=65",
+    url="https://sequentmicrosystems.com/collections/all-io-cards/products/raspberry-pi-building-automation",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 2/3",

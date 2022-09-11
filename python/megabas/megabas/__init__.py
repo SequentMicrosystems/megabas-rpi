@@ -42,6 +42,7 @@ CAL_STAT_ADD = 64
 # TEMPERATURE_ADD = 64
 MODBUS_SETINGS_ADD = 65  # = (0)
 MODBUS_ID_OFFSET_ADD = 69
+
 RTC_YEAR_ADD = 70
 RTC_MONTH_ADD = 71
 RTC_DAY_ADD = 72
@@ -430,3 +431,59 @@ def wdtGetResetCount(stack):
         bus.close()
         raise ValueError(e)
     return val
+
+
+I2C_RTC_YEAR_ADD = 70
+I2C_RTC_MONTH_ADD = 71
+I2C_RTC_DAY_ADD = 72
+I2C_RTC_HOUR_ADD = 73
+I2C_RTC_MINUTE_ADD = 74
+I2C_RTC_SECOND_ADD = 75
+I2C_RTC_SET_YEAR_ADD = 76
+I2C_RTC_SET_MONTH_ADD = 77
+I2C_RTC_SET_DAY_ADD = 78
+I2C_RTC_SET_HOUR_ADD = 79
+I2C_RTC_SET_MINUTE_ADD = 80
+I2C_RTC_SET_SECOND_ADD = 81
+I2C_RTC_CMD_ADD = 82
+
+
+def rtcGet(stack):
+    global I2C_RTC_YEAR_ADD
+    checkStack(stack)
+    bus = smbus.SMBus(1)
+    try:
+        buff = bus.read_i2c_block_data(HW_ADD + stack, I2C_RTC_YEAR_ADD, 6)
+    except Exception as e:
+        bus.close()
+        raise ValueError(e)
+    bus.close()
+    t = (2000 + buff[0], buff[1], buff[2], buff[3], buff[4], buff[5])
+    return t
+
+
+def rtcSet(stack, y, mo, d, h, m, s):
+    if y > 2000:
+        y -= 2000
+    if y < 0 or y > 255:
+        raise ValueError("Invalid year!")
+    if mo > 12 or mo < 1:
+        raise ValueError("Invalid month!")
+    if d < 1 or d > 31:
+        raise ValueError("Invalid day!")
+    if h < 0 or h > 23:
+        raise ValueError("Invalid hour!")
+    if m < 0 or m > 59:
+        raise ValueError("Invalid minute!")
+    if s < 0 or s > 59:
+        raise ValueError("Invalid seconds!")
+    checkStack(stack)
+    bus = smbus.SMBus(1)
+    buff = [int(y), int(mo), int(d), int(h), int(m), int(s), 0xaa]
+    try:
+        bus.write_i2c_block_data(HW_ADD + stack, I2C_RTC_SET_YEAR_ADD, buff)
+    except Exception as e:
+        bus.close()
+        raise ValueError(e)
+    bus.close()
+
