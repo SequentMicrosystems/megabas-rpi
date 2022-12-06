@@ -503,6 +503,17 @@ I2C_MEM_1WB_ROM_CODE = 207
 OWB_TEMP_SIZE_B = 2
 OWM_ROM_CODE_SIZE_B = 8
 
+def owbScan(stack):
+    checkStack(stack)
+    bus = smbus.SMBus(BUS_NO)
+    buf = 0xaa
+    try:
+        bus.write_byte_data(HW_ADD + stack, I2C_MEM_1WB_START_SEARCH, buf)
+    except Exception as e:
+        bus.close()
+        raise Exception("Fail to write with exception " + str(e))
+    bus.close()
+
 
 def owbGetSensorNo(stack):
     checkStack(stack)
