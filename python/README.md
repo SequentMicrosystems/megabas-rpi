@@ -287,14 +287,14 @@ return - [0..65535]
 ### rtcGet(stack)
 Return the RTC date and time as a list
 
-stack - stack level of the megaind  card (selectable from address jumpers [0..7])
+stack - stack level of the megabas  card (selectable from address jumpers [0..7])
 
 return (year, month, day, hour, minute, seconds)
 
 ### rtcSet(stack, y, mo, d, h, m, s)
 Set the RTC date and time
 
-stack - stack level of the megaind  card (selectable from address jumpers [0..7])
+stack - stack level of the megabas  card (selectable from address jumpers [0..7])
 
 y - year between 2000..2255 or between 0..255
 
@@ -307,3 +307,31 @@ h - hour
 m - minutes
 
 s - seconds
+
+## Owire Bus Functions
+
+### owbGetSensorNo(stack)
+Get the numbers of 18B20 sensors connected on the bus
+
+ stack - stack level of the megabas  card (selectable from address jumpers [0..7])
+
+ return number of connected sensors
+
+### owbGetTemp(stack, sensor)
+Read the temperature aquired by one sensor
+
+ stack - stack level of the megabas  card (selectable from address jumpers [0..7])
+ 
+ sensor - sensor number [1..16]
+
+ return temperature in degree Celsius
+ 
+ ### owbGetRomCode(stack, sensor)
+ Read the unic ROM code of one sensor
+ 
+  stack - stack level of the megabas  card (selectable from address jumpers [0..7])
+ 
+  sensor - sensor number [1..16]
+
+  return ROM code as 8 bytes array
+
