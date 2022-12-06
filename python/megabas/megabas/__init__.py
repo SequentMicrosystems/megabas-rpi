@@ -2,6 +2,7 @@ import smbus
 import time
 import math
 
+BUS_NO = 1  # change this in case of using different SBC 7 for ROCK 4 SE
 TRIACS_VAL_ADD = 0
 TRIACS_SET_ADD = 1
 TRIACS_CLR_ADD = 2
@@ -112,9 +113,14 @@ def checkCh(ch, max):
         raise ValueError('Channel out of range [1..' + str(max) + ']')
 
 
+def checkOwbSns(ch):
+    if ch < 1 or ch > 16:
+        raise ValueError('One Wire Bus sensor number out of range [1..16]')
+
+
 def getVer(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     fw_maj = bus.read_byte_data(HW_ADD + stack, REVISION_MAJOR_MEM_ADD)
     fw_min = bus.read_byte_data(HW_ADD + stack, REVISION_MINOR_MEM_ADD)
     ret = " Fw " + str(fw_maj) + "." + str(fw_min)
@@ -129,7 +135,7 @@ def setUOut(stack, ch, val):
     if val < 0 or val > 10:
         raise ValueError('Invalid value')
 
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     bus.write_word_data(HW_ADD + stack, U0_10_OUT_VAL1_ADD + (2 * (ch - 1)), int(val * 1000))
     bus.close()
     return 1
@@ -138,7 +144,7 @@ def setUOut(stack, ch, val):
 def getUOut(stack, ch):
     checkCh(ch, U_OUT_CH_MAX)
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_word_data(HW_ADD + stack, U0_10_OUT_VAL1_ADD + (2 * (ch - 1)))
     bus.close()
     return c2(val) / 1000.0
@@ -147,7 +153,7 @@ def getUOut(stack, ch):
 def getUIn(stack, ch):
     checkCh(ch, U_IN_CH_MAX)
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_word_data(HW_ADD + stack, U0_10_IN_VAL1_ADD + (2 * (ch - 1)))
     bus.close()
     return c2(val) / 1000.0
@@ -156,7 +162,7 @@ def getUIn(stack, ch):
 def getRIn1K(stack, ch):
     checkCh(ch, R_IN_CH_MAX)
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_word_data(HW_ADD + stack, R_1K_CH1 + (2 * (ch - 1)))
     bus.close()
     return val / 1000.0
@@ -165,7 +171,7 @@ def getRIn1K(stack, ch):
 def getRIn10K(stack, ch):
     checkCh(ch, R_IN_CH_MAX)
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_word_data(HW_ADD + stack, R_10K_CH1 + (2 * (ch - 1)))
     bus.close()
     return val / 1000.0
@@ -173,7 +179,7 @@ def getRIn10K(stack, ch):
 
 def getTriacs(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_byte_data(HW_ADD + stack, TRIACS_VAL_ADD)
     bus.close()
     return val
@@ -181,7 +187,7 @@ def getTriacs(stack):
 
 def setTriacs(stack, val):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         bus.write_byte_data(HW_ADD + stack, TRIACS_VAL_ADD, val)
     except:
@@ -194,7 +200,7 @@ def setTriacs(stack, val):
 def setTriac(stack, ch, val):
     checkCh(ch, TRIAC_CH_MAX)
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     if val != 0:
         bus.write_byte_data(HW_ADD + stack, TRIACS_SET_ADD, ch)
     else:
@@ -215,7 +221,7 @@ def togleTriac(stack, ch, delay, count):
 
 def getContact(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_byte_data(HW_ADD + stack, DRY_CONTACT_VAL_ADD)
     bus.close()
     return val
@@ -224,7 +230,7 @@ def getContact(stack):
 def getContactCh(stack, ch):
     checkCh(ch, CONTACT_CH_MAX)
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_byte_data(HW_ADD + stack, DRY_CONTACT_VAL_ADD)
     bus.close()
     mask = 1 << (ch - 1)
@@ -236,7 +242,7 @@ def getContactCh(stack, ch):
 def getContactCounter(stack, ch):
     checkCh(ch, CONTACT_CH_MAX)
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         buff = bus.read_i2c_block_data(HW_ADD + stack, I2C_MEM_DRY_CONTACT_COUNTERS + (ch - 1) * 4, 4)
         val = buff[0] + (buff[1] << 8) + (buff[2] << 16) + (buff[3] << 24)
@@ -250,7 +256,7 @@ def getContactCounter(stack, ch):
 def getContactCountEdge(stack, ch):
     checkCh(ch, CONTACT_CH_MAX)
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         rising = bus.read_byte_data(HW_ADD + stack, I2C_MEM_DRY_CONTACT_RISING_ENABLE)
         falling = bus.read_byte_data(HW_ADD + stack, I2C_MEM_DRY_CONTACT_FALLING_ENABLE)
@@ -271,7 +277,7 @@ def setContactCountEdge(stack, ch, edge):
     checkStack(stack)
     if edge < 0 or edge > 3:
         raise ValueError('Invalid edge type, 0 - none(disable counting), 1 - rising, 2 - falling, 3 - both')
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         rising = bus.read_byte_data(HW_ADD + stack, I2C_MEM_DRY_CONTACT_RISING_ENABLE)
         falling = bus.read_byte_data(HW_ADD + stack, I2C_MEM_DRY_CONTACT_FALLING_ENABLE)
@@ -297,7 +303,7 @@ def setContactCountEdge(stack, ch, edge):
 
 def getInVolt(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_word_data(HW_ADD + stack, DIAG_24V_MEM_ADD)
     bus.close()
     return val / 1000.0
@@ -305,7 +311,7 @@ def getInVolt(stack):
 
 def getRaspVolt(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_word_data(HW_ADD + stack, DIAG_5V_MEM_ADD)
     bus.close()
     return val / 1000.0
@@ -313,7 +319,7 @@ def getRaspVolt(stack):
 
 def getCpuTemp(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     val = bus.read_byte_data(HW_ADD + stack, DIAG_TEMPERATURE_MEM_ADD)
     bus.close()
     return val
@@ -324,7 +330,7 @@ def getCpuTemp(stack):
 
 def wdtGetPeriod(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         val = bus.read_word_data(HW_ADD + stack, I2C_MEM_WDT_INTERVAL_GET_ADD)
     except Exception as e:
@@ -339,7 +345,7 @@ def wdtSetPeriod(stack, val):
     checkStack(stack)
     if val < 10 or val > 65000:
         raise ValueError('Invalid interval value [10..65000]')
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         bus.write_word_data(HW_ADD + stack, I2C_MEM_WDT_INTERVAL_SET_ADD, val)
     except Exception as e:
@@ -352,7 +358,7 @@ def wdtSetPeriod(stack, val):
 def wdtReload(stack):
     ret = 1
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         bus.write_byte_data(HW_ADD + stack, I2C_MEM_WDT_RESET_ADD, RELOAD_KEY)
     except Exception as e:
@@ -367,7 +373,7 @@ def wdtSetDefaultPeriod(stack, val):
     checkStack(stack)
     if val < 10 or val > 64999:
         raise ValueError('Invalid interval value [10..64999]')
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     if 10 < val < 65000:
         try:
             bus.write_word_data(HW_ADD + stack, I2C_MEM_WDT_INIT_INTERVAL_SET_ADD, val)
@@ -381,7 +387,7 @@ def wdtSetDefaultPeriod(stack, val):
 
 def wdtGetDefaultPeriod(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         val = bus.read_word_data(HW_ADD + stack, I2C_MEM_WDT_INIT_INTERVAL_GET_ADD)
     except Exception as e:
@@ -395,7 +401,7 @@ def wdtSetOffInterval(stack, val):
     checkStack(stack)
     if 10 > val or val > WDT_MAX_POWER_OFF_INTERVAL:
         raise ValueError('Invalid interval value [2..4147200]')
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     buff = [0, 0, 0, 0]
     buff[0] = 0xff & val
     buff[1] = 0xff & (val >> 8)
@@ -412,7 +418,7 @@ def wdtSetOffInterval(stack, val):
 
 def wdtGetOffInterval(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         buff = bus.read_i2c_block_data(HW_ADD + stack, I2C_MEM_WDT_POWER_OFF_INTERVAL_GET_ADD, 4)
         val = buff[0] + (buff[1] << 8) + (buff[2] << 16) + (buff[3] << 24)
@@ -424,7 +430,7 @@ def wdtGetOffInterval(stack):
 
 def wdtGetResetCount(stack):
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         val = bus.read_word_data(HW_ADD + stack, I2C_MEM_WDT_RESET_COUNT_ADD)
     except Exception as e:
@@ -451,7 +457,7 @@ I2C_RTC_CMD_ADD = 82
 def rtcGet(stack):
     global I2C_RTC_YEAR_ADD
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     try:
         buff = bus.read_i2c_block_data(HW_ADD + stack, I2C_RTC_YEAR_ADD, 6)
     except Exception as e:
@@ -478,7 +484,7 @@ def rtcSet(stack, y, mo, d, h, m, s):
     if s < 0 or s > 59:
         raise ValueError("Invalid seconds!")
     checkStack(stack)
-    bus = smbus.SMBus(1)
+    bus = smbus.SMBus(BUS_NO)
     buff = [int(y), int(mo), int(d), int(h), int(m), int(s), 0xaa]
     try:
         bus.write_i2c_block_data(HW_ADD + stack, I2C_RTC_SET_YEAR_ADD, buff)
@@ -487,3 +493,51 @@ def rtcSet(stack, y, mo, d, h, m, s):
         raise ValueError(e)
     bus.close()
 
+
+I2C_MEM_1WB_DEV = 161
+I2C_MEM_1WB_TEMP_ALL = 162
+I2C_MEM_1WB_START_SEARCH = 173
+I2C_MEM_1WB_T1 = 174
+I2C_MEM_1WB_ROM_CODE_IDX = 206
+I2C_MEM_1WB_ROM_CODE = 207
+OWB_TEMP_SIZE_B = 2
+OWM_ROM_CODE_SIZE_B = 8
+
+
+def owbGetSensorNo(stack):
+    checkStack(stack)
+    bus = smbus.SMBus(BUS_NO)
+    try:
+        no = bus.read_byte_data(HW_ADD + stack, I2C_MEM_1WB_DEV)
+    except Exception as e:
+        bus.close()
+        raise Exception("Fail to read with exception " + str(e))
+    bus.close()
+    return no
+
+
+def owbGetTemp(stack, sensor):
+    checkOwbSns(sensor)
+    checkStack(stack)
+    bus = smbus.SMBus(BUS_NO)
+    try:
+        temp = bus.read_word_data(HW_ADD + stack, I2C_MEM_1WB_T1 + OWB_TEMP_SIZE_B * (sensor - 1))
+    except Exception as e:
+        bus.close()
+        raise Exception("Fail to read with exception " + str(e))
+    bus.close()
+    return temp / 100.0
+
+
+def owbGetRomCode(stack, sensor):
+    checkOwbSns(sensor)
+    checkStack(stack)
+    bus = smbus.SMBus(BUS_NO)
+    try:
+        bus.write_byte_data(HW_ADD + stack, I2C_MEM_1WB_ROM_CODE_IDX, sensor - 1)  # Select the sensor
+        buff = bus.read_i2c_block_data(HW_ADD + stack, I2C_MEM_1WB_ROM_CODE, 8)
+    except Exception as e:
+        bus.close()
+        raise Exception("Fail to read with exception " + str(e))
+    bus.close()
+    return buff
