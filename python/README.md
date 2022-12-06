@@ -310,6 +310,11 @@ s - seconds
 
 ## Owire Bus Functions
 
+### owbScan(stack)
+Start scanning for connected sensors
+
+ stack - stack level of the megabas  card (selectable from address jumpers [0..7])
+
 ### owbGetSensorNo(stack)
 Get the numbers of 18B20 sensors connected on the bus
 
