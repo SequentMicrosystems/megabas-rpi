@@ -20,7 +20,7 @@
 
 #define VERSION_BASE	(int)1
 #define VERSION_MAJOR	(int)2
-#define VERSION_MINOR	(int)3
+#define VERSION_MINOR	(int)4
 
 #define UNUSED(X) (void)X      /* To avoid gcc/g++ warnings */
 
@@ -2158,6 +2158,14 @@ int rs485Set(int dev, u8 mode, u32 baud, u8 stopB, u8 parity, u8 add)
 {
 	ModbusSetingsType settings;
 	u8 buff[5];
+	
+	if(0 == mode)//disable modbus
+	{
+		baud = 9600;
+		stopB = 1;
+		parity = 0;
+		add = 1;
+	}
 
 	if (baud > 920600 || baud < 1200)
 	{
