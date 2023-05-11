@@ -2,7 +2,7 @@
 
 # megabas-rpi
 
-This is the command to control [Building Automation Stackable Card for Raspberry Pi](https://sequentmicrosystems.com/collections/all-io-cards/products/building-automation-br-8-layer-stackable-hat-v4-br-for-raspberry-pi)
+This is the command to control [Building Automation Stackable Card for Raspberry Pi](https://sequentmicrosystems.com/products/building-automation-8-layer-stackable-hat-v4-for-raspberry-pi)
 
 ![MEGA-BAS](res/megabas.jpg)
 
