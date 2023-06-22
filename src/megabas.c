@@ -2,7 +2,7 @@
  * rtd.c:
  *	Command-line interface to the Raspberry
  *	Pi's MEGAS-RTD board.
- *	Copyright (c) 2016-2020 Sequent Microsystem
+ *	Copyright (c) 2016-2023 Sequent Microsystem
  *	<http://www.sequentmicrosystem.com>
  ***********************************************************************
  *	Author: Alexandru Burcea
@@ -20,12 +20,12 @@
 
 #define VERSION_BASE	(int)1
 #define VERSION_MAJOR	(int)2
-#define VERSION_MINOR	(int)4
+#define VERSION_MINOR	(int)5
 
 #define UNUSED(X) (void)X      /* To avoid gcc/g++ warnings */
 
 char *warranty =
-	"	       Copyright (c) 2016-2020 Sequent Microsystems\n"
+	"	       Copyright (c) 2016-2023 Sequent Microsystems\n"
 		"                                                             \n"
 		"		This program is free software; you can redistribute it and/or modify\n"
 		"		it under the terms of the GNU Leser General Public License as published\n"
@@ -113,10 +113,7 @@ int boardCheck(int stack)
 }
 int doHelp(int argc, char *argv[]);
 const CliCmdType CMD_HELP =
-	{
-		"-h",
-		1,
-		&doHelp,
+	{"-h", 1, &doHelp,
 		"\t-h		Display the list of command options or one command option details\n",
 		"\tUsage:		megabas -h    Display command options list\n",
 		"\tUsage:		megabas -h <param>   Display help for <param> command option\n",
@@ -171,36 +168,25 @@ int doHelp(int argc, char *argv[])
 }
 
 int doVersion(int argc, char *argv[]);
-const CliCmdType CMD_VERSION =
-{
-	"-v",
-	1,
-	&doVersion,
+const CliCmdType CMD_VERSION = {"-v", 1, &doVersion,
 	"\t-v		Display the megabas command version number\n",
-	"\tUsage:		megabas -v\n",
-	"",
+	"\tUsage:		megabas -v\n", "",
 	"\tExample:		megabas -v  Display the version number\n"};
 
 int doVersion(int argc, char *argv[])
 {
 	UNUSED(argc);
 	UNUSED(argv);
-	printf("megabas v%d.%d.%d Copyright (c) 2016 - 2020 Sequent Microsystems\n",
+	printf("megabas v%d.%d.%d Copyright (c) 2016 - 2023 Sequent Microsystems\n",
 	VERSION_BASE, VERSION_MAJOR, VERSION_MINOR);
 	printf("\nThis is free software with ABSOLUTELY NO WARRANTY.\n");
 	printf("For details type: megabas -warranty\n");
 	return OK;
 }
 
-int doWarranty(int argc, char* argv[]);
-const CliCmdType CMD_WAR =
-{
-	"-warranty",
-	1,
-	&doWarranty,
-	"\t-warranty	Display the warranty\n",
-	"\tUsage:		megabas -warranty\n",
-	"",
+int doWarranty(int argc, char *argv[]);
+const CliCmdType CMD_WAR = {"-warranty", 1, &doWarranty,
+	"\t-warranty	Display the warranty\n", "\tUsage:		megabas -warranty\n", "",
 	"\tExample:		megabas -warranty  Display the warranty text\n"};
 
 int doWarranty(int argc UNU, char* argv[] UNU)
@@ -211,13 +197,9 @@ int doWarranty(int argc UNU, char* argv[] UNU)
 
 int doList(int argc, char *argv[]);
 const CliCmdType CMD_LIST =
-	{
-		"-list",
-		1,
-		&doList,
+	{"-list", 1, &doList,
 		"\t-list:		List all megabas boards connected\n\t\t\treturn the # of boards and stack level for every board\n",
-		"\tUsage:		megabas -list\n",
-		"",
+		"\tUsage:		megabas -list\n", "",
 		"\tExample:		megabas -list display: 1,0 \n"};
 
 int doList(int argc, char *argv[])
@@ -252,14 +234,9 @@ int doList(int argc, char *argv[])
 }
 
 int doBoard(int argc, char *argv[]);
-const CliCmdType CMD_BOARD =
-{
-	"board",
-	2,
-	&doBoard,
+const CliCmdType CMD_BOARD = {"board", 2, &doBoard,
 	"\tboard		Display the board status and firmware version number\n",
-	"\tUsage:		megabas <id> board\n",
-	"",
+	"\tUsage:		megabas <id> board\n", "",
 	"\tExample:		megabas 0 board  Display vcc, temperature, firmware version \n"};
 
 int doBoard(int argc, char *argv[])
@@ -303,7 +280,7 @@ int doBoard(int argc, char *argv[])
 	printf(
 		"Firmware ver %02d.%02d, CPU temperature %d C, Power source %0.2f V, Raspberry %0.2f V\n",
 		(int)buff[0], (int)buff[1], temperature, vIn, vRasp);
-		return OK;
+	return OK;
 }
 
 int triacChSet(int dev, u8 channel, OutStateEnumType state)
@@ -339,7 +316,7 @@ int triacChSet(int dev, u8 channel, OutStateEnumType state)
 	return resp;
 }
 
-int triacChGet(int dev, u8 channel, OutStateEnumType* state)
+int triacChGet(int dev, u8 channel, OutStateEnumType *state)
 {
 	u8 buff[2];
 
@@ -379,7 +356,7 @@ int triacSet(int dev, int val)
 	return i2cMem8Write(dev, I2C_TRIACS_VAL_ADD, buff, 1);
 }
 
-int triacGet(int dev, int* val)
+int triacGet(int dev, int *val)
 {
 	u8 buff[2];
 
@@ -396,11 +373,7 @@ int triacGet(int dev, int* val)
 }
 
 int doTriacWrite(int argc, char *argv[]);
-const CliCmdType CMD_TRIAC_WRITE =
-{
-	"trwr",
-	2,
-	&doTriacWrite,
+const CliCmdType CMD_TRIAC_WRITE = {"trwr", 2, &doTriacWrite,
 	"\ttrwr:		Set triacs (AC switch) On/Off\n",
 	"\tUsage:		megabas <id> trwr <channel> <on/off>\n",
 	"\tUsage:		megabas <id> trwr <value>\n",
@@ -516,14 +489,9 @@ int doTriacWrite(int argc, char *argv[])
 }
 
 int doTriacRead(int argc, char *argv[]);
-const CliCmdType CMD_TRIAC_READ =
-{
-	"trrd",
-	2,
-	&doTriacRead,
+const CliCmdType CMD_TRIAC_READ = {"trrd", 2, &doTriacRead,
 	"\ttrrd:		Read triacs (AC switch) status\n",
-	"\tUsage:		megabas <id> trrd <channel>\n",
-	"\tUsage:		megabas <id> trrd\n",
+	"\tUsage:		megabas <id> trrd <channel>\n", "\tUsage:		megabas <id> trrd\n",
 	"\tExample:		megabas 0 trrd 2; Read Status of Triac #2 on Board #0\n"};
 
 int doTriacRead(int argc, char *argv[])
@@ -580,18 +548,12 @@ int doTriacRead(int argc, char *argv[])
 	return OK;
 }
 
-int doTriacTest(int argc, char* argv[]);
-const CliCmdType CMD_TEST =
-{
-	"trtest",
-	2,
-	&doTriacTest,
+int doTriacTest(int argc, char *argv[]);
+const CliCmdType CMD_TEST = {"trtest", 2, &doTriacTest,
 	"\ttrtest:		Turn ON and OFF the triacs until press a key\n",
-	"\tUsage:		megabas <id> trtest\n",
-	"",
-	"\tExample:		megabas 0 trtest\n"};
+	"\tUsage:		megabas <id> trtest\n", "", "\tExample:		megabas 0 trtest\n"};
 
-int doTriacTest(int argc, char* argv[])
+int doTriacTest(int argc, char *argv[])
 {
 	int dev = 0;
 	int i = 0;
@@ -599,13 +561,8 @@ int doTriacTest(int argc, char* argv[])
 	int trVal;
 	int valR;
 	int triacResult = 0;
-	FILE* file = NULL;
-	const u8 triacOrder[4] =
-	{
-		1,
-		2,
-		3,
-		4, };
+	FILE *file = NULL;
+	const u8 triacOrder[4] = {1, 2, 3, 4, };
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -731,7 +688,7 @@ int doTriacTest(int argc, char* argv[])
 	return OK;
 }
 
-int contactChGet(int dev, u8 channel, OutStateEnumType* state)
+int contactChGet(int dev, u8 channel, OutStateEnumType *state)
 {
 	u8 buff[2];
 
@@ -762,7 +719,7 @@ int contactChGet(int dev, u8 channel, OutStateEnumType* state)
 	return OK;
 }
 
-int contactGet(int dev, int* val)
+int contactGet(int dev, int *val)
 {
 	u8 buff[2];
 
@@ -778,7 +735,7 @@ int contactGet(int dev, int* val)
 	return OK;
 }
 
-int contactCountGet(int dev, u8 ch, u32* val)
+int contactCountGet(int dev, u8 ch, u32 *val)
 {
 	u8 buff[4];
 
@@ -876,7 +833,7 @@ int contactCountFallingSet(int dev, u8 channel, u8 state)
 	return OK;
 }
 
-int contactCountRisingGet(int dev, u8 channel, u8* state)
+int contactCountRisingGet(int dev, u8 channel, u8 *state)
 {
 	u8 buff[4];
 
@@ -905,7 +862,7 @@ int contactCountRisingGet(int dev, u8 channel, u8* state)
 	return OK;
 }
 
-int contactCountFallingGet(int dev, u8 channel, u8* state)
+int contactCountFallingGet(int dev, u8 channel, u8 *state)
 {
 	u8 buff[4];
 
@@ -936,10 +893,7 @@ int contactCountFallingGet(int dev, u8 channel, u8* state)
 
 int doContactRead(int argc, char *argv[]);
 const CliCmdType CMD_CONTACT_READ =
-	{
-		"contactrd",
-		2,
-		&doContactRead,
+	{"contactrd", 2, &doContactRead,
 		"\tcontactrd:	Read dry contact status\n\t\t\tWarning: For this measurements to be valid place the jumper in position \"1K\" \n",
 		"\tUsage:		megabas <id> contactrd <channel>\n",
 		"\tUsage:		megabas <id> contactrd\n",
@@ -1001,13 +955,9 @@ int doContactRead(int argc, char *argv[])
 
 int doCountRead(int argc, char *argv[]);
 const CliCmdType CMD_COUNTER_READ =
-	{
-		"countrd",
-		2,
-		&doCountRead,
+	{"countrd", 2, &doCountRead,
 		"\tcountrd:	Read dry contact transitions count\n\t\t\tWarning: For this measurements to be valid place the jumper in position \"1K\" \n",
-		"\tUsage:		megabas <id> countrd <channel>\n",
-		"",
+		"\tUsage:		megabas <id> countrd <channel>\n", "",
 		"\tExample:		megabas 0 countrd 2; Read transitions count of dry contact pin #2 on Board #0\n"};
 
 int doCountRead(int argc, char *argv[])
@@ -1043,13 +993,9 @@ int doCountRead(int argc, char *argv[])
 
 int doCountReset(int argc, char *argv[]);
 const CliCmdType CMD_COUNTER_RST =
-	{
-		"countrst",
-		2,
-		&doCountReset,
+	{"countrst", 2, &doCountReset,
 		"\tcountrst:	Reset dry contact transitions count\n",
-		"\tUsage:		megabas <id> countrst <channel>\n",
-		"",
+		"\tUsage:		megabas <id> countrst <channel>\n", "",
 		"\tExample:		megabas 0 countrst 2; Reset transitions count of dry contact pin #2 on Board #0\n"};
 
 int doCountReset(int argc, char *argv[])
@@ -1084,13 +1030,9 @@ int doCountReset(int argc, char *argv[])
 
 int doEdgeRead(int argc, char *argv[]);
 const CliCmdType CMD_EDGE_READ =
-	{
-		"edgerd",
-		2,
-		&doEdgeRead,
+	{"edgerd", 2, &doEdgeRead,
 		"\tedgerd:		Read dry contact transitions type, ret 0 - disable, 1 - rising, 2 - falling, 3 - both\n",
-		"\tUsage:		megabas <id> edgerd <channel> \n",
-		"",
+		"\tUsage:		megabas <id> edgerd <channel> \n", "",
 		"\tExample:		megabas 0 edgerd 2; Read transitions type of dry contact pin #2 on Board #0\n"};
 
 int doEdgeRead(int argc, char *argv[])
@@ -1099,7 +1041,6 @@ int doEdgeRead(int argc, char *argv[])
 	u8 rising = 0;
 	u8 falling = 0;
 	int dev = 0;
-	
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -1121,7 +1062,7 @@ int doEdgeRead(int argc, char *argv[])
 			printf("Fail to read!\n");
 			exit(1);
 		}
-		printf("%d\n", (int)(rising + falling * 2));
+		printf("%d\n", (int) (rising + falling * 2));
 	}
 	else
 	{
@@ -1133,13 +1074,9 @@ int doEdgeRead(int argc, char *argv[])
 
 int doEdgeWrite(int argc, char *argv[]);
 const CliCmdType CMD_EDGE_WRITE =
-	{
-		"edgewr",
-		2,
-		&doEdgeWrite,
+	{"edgewr", 2, &doEdgeWrite,
 		"\tedgewr:		Write dry contact transitions type: 0 - disable, 1 - rising, 2 - falling, 3 - both\n",
-		"\tUsage:		megabas <id> edgewr <channel> <val>\n",
-		"",
+		"\tUsage:		megabas <id> edgewr <channel> <val>\n", "",
 		"\tExample:		megabas 0 edgewr 2 1; Set transitions type of dry contact pin #2 on Board #0 to rising\n"};
 
 int doEdgeWrite(int argc, char *argv[])
@@ -1148,7 +1085,7 @@ int doEdgeWrite(int argc, char *argv[])
 	u8 rising = 0;
 	u8 falling = 0;
 	int dev = 0;
-	
+
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
 	{
@@ -1158,15 +1095,15 @@ int doEdgeWrite(int argc, char *argv[])
 	if (argc == 5)
 	{
 		pin = (u8)atoi(argv[3]);
-		
-		if((1 & atoi(argv[4])) != 0)
+
+		if ( (1 & atoi(argv[4])) != 0)
 		{
 			rising = 1;
 		}
-		if((2 & atoi(argv[4])) != 0)
-				{
-					falling = 1;
-				}
+		if ( (2 & atoi(argv[4])) != 0)
+		{
+			falling = 1;
+		}
 		if (OK != contactCountRisingSet(dev, pin, rising))
 		{
 			printf("Fail to write!\n");
@@ -1177,7 +1114,7 @@ int doEdgeWrite(int argc, char *argv[])
 			printf("Fail to write!\n");
 			exit(1);
 		}
-		
+
 	}
 	else
 	{
@@ -1187,12 +1124,165 @@ int doEdgeWrite(int argc, char *argv[])
 	return OK;
 }
 
-int dacGet(int dev, int ch, float* val)
+int buttonIntCfgSet(int dev, u8 state)
 {
-	u8 buff[2] =
+	u8 buff[4];
+
+	if (state > 1)
 	{
-		0,
-		0};
+		state = 1;
+	}
+	buff[0] = state;
+	if (FAIL == i2cMem8Write(dev, I2C_EXT_INT_OUT_ENABLE, buff, 1))
+	{
+		return ERROR;
+	}
+	return OK;
+}
+
+int buttonIntCfgGet(int dev, u8 *state)
+{
+	u8 buff[2];
+
+	if (state == NULL)
+	{
+		return ERROR;
+	}
+	if (FAIL == i2cMem8Read(dev, I2C_EXT_INT_OUT_ENABLE, buff, 1))
+	{
+		return ERROR;
+	}
+	*state = buff[0];
+	return OK;
+}
+
+int buttonGetState(int dev, u8 *state)
+{
+	u8 buff[2];
+
+	if (state == NULL)
+	{
+		return ERROR;
+	}
+	if (FAIL == i2cMem8Read(dev, I2C_BUTTON_STATE, buff, 1))
+	{
+		return ERROR;
+	}
+	*state = buff[0];
+	return OK;
+}
+
+int doExtiCfgRead(int argc, char *argv[]);
+const CliCmdType CMD_EXTI_READ =
+	{"exticfgrd", 2, &doExtiCfgRead,
+		"\texticfgrd:		Read the external interrupt output enable flag, returns 0 = disabled, 1 = enabled \n",
+		"\tUsage:		megabas <id> exticfgrd \n", "",
+		"\tExample:		megabas 0 exticfgrd ; Read the interrupt output enable flag on Board #0\n"};
+
+int doExtiCfgRead(int argc, char *argv[])
+{
+	u8 val = 0;
+	int dev = 0;
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 3)
+	{
+
+		if (OK != buttonIntCfgGet(dev, &val))
+		{
+			printf("Fail to read!\n");
+			exit(1);
+		}
+		printf("%d\n", (int)val);
+	}
+	else
+	{
+		printf("%s", CMD_EXTI_READ.usage1);
+		exit(1);
+	}
+	return OK;
+}
+
+int doExtiCfgWrite(int argc, char *argv[]);
+const CliCmdType CMD_EXTI_WRITE =
+	{"exticfgwr", 2, &doExtiCfgWrite,
+		"\texticfgwr:		Write the external interrupt output enable flag \n",
+		"\tUsage:		megabas <id> exticfgwr <0/1> \n", "",
+		"\tExample:		megabas 0 exticfgwr 1; Enable the interrupt output on Board #0\n"};
+
+int doExtiCfgWrite(int argc, char *argv[])
+{
+	int dev = 0;
+	u8 state = 0;
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 4)
+	{
+		state = (u8)atoi(argv[3]);
+
+		if (OK != buttonIntCfgSet(dev, state))
+		{
+			printf("Fail to write!\n");
+			exit(1);
+		}
+		printf("Done\n");
+	}
+	else
+	{
+		printf("%s", CMD_EXTI_WRITE.usage1);
+		exit(1);
+	}
+	return OK;
+}
+
+int doButtonRead(int argc, char *argv[]);
+const CliCmdType CMD_BUTTON_READ =
+	{"btn", 2, &doButtonRead,
+		"\tbtn:		Read the button state\n",
+		"\tUsage:		megabas <id> btn \n", "",
+		"\tExample:		megabas 0 btn ; Read the button state on Board #0\n"};
+
+int doButtonRead(int argc, char *argv[])
+{
+	u8 val = 0;
+	int dev = 0;
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 3)
+	{
+		if (OK != buttonGetState(dev, &val))
+		{
+			printf("Fail to read!\n");
+			exit(1);
+		}
+		printf("%d\n", (int)val);
+	}
+	else
+	{
+		printf("%s", CMD_EXTI_READ.usage1);
+		exit(1);
+	}
+	return OK;
+}
+
+int dacGet(int dev, int ch, float *val)
+{
+	u8 buff[2] = {0, 0};
 	u16 raw = 0;
 
 	if ( (ch < CHANNEL_NR_MIN) || (ch > DAC_CH_NR_MAX))
@@ -1212,10 +1302,7 @@ int dacGet(int dev, int ch, float* val)
 
 int dacSet(int dev, int ch, float val)
 {
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 	u16 raw = 0;
 
 	if ( (ch < CHANNEL_NR_MIN) || (ch > DAC_CH_NR_MAX))
@@ -1243,13 +1330,8 @@ int dacSet(int dev, int ch, float val)
 
 int doDacRead(int argc, char *argv[]);
 const CliCmdType CMD_DAC_READ =
-	{
-		"dacrd",
-		2,
-		&doDacRead,
-		"\tdacrd:		Read DAC voltage value (0 - 10V)\n",
-		"\tUsage:		megabas <id> dacrd <channel>\n",
-		"",
+	{"dacrd", 2, &doDacRead, "\tdacrd:		Read DAC voltage value (0 - 10V)\n",
+		"\tUsage:		megabas <id> dacrd <channel>\n", "",
 		"\tExample:		megabas 0 dacrd 2; Read the voltage on 0-10V out channel #2 on Board #0\n"};
 
 int doDacRead(int argc, char *argv[])
@@ -1291,13 +1373,9 @@ int doDacRead(int argc, char *argv[])
 
 int doDacWrite(int argc, char *argv[]);
 const CliCmdType CMD_DAC_WRITE =
-	{
-		"dacwr",
-		2,
-		&doDacWrite,
+	{"dacwr", 2, &doDacWrite,
 		"\tdacwr:		Write DAC output voltage value (0..10V)\n",
-		"\tUsage:		megabas <id> dacwr <channel> <value>\n",
-		"",
+		"\tUsage:		megabas <id> dacwr <channel> <value>\n", "",
 		"\tExample:		megabas 0 dacwr 2 2.5; Write 2.5V to 0-10V out channel #2 on Board #0\n"};
 
 int doDacWrite(int argc, char *argv[])
@@ -1342,12 +1420,9 @@ int doDacWrite(int argc, char *argv[])
 	return OK;
 }
 
-int adcGet(int dev, int ch, float* val)
+int adcGet(int dev, int ch, float *val)
 {
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 	u16 raw = 0;
 
 	if ( (ch < CHANNEL_NR_MIN) || (ch > ADC_CH_NR_MAX))
@@ -1367,13 +1442,9 @@ int adcGet(int dev, int ch, float* val)
 
 int doAdcRead(int argc, char *argv[]);
 const CliCmdType CMD_ADC_READ =
-	{
-		"adcrd",
-		2,
-		&doAdcRead,
+	{"adcrd", 2, &doAdcRead,
 		"\tadcrd:		Read ADC input voltage value (0 - 10V)\n\t\t\tWarning: For this measurements to be valid place the jumper in position \"0-10V\" \n",
-		"\tUsage:		megabas <id> adcrd <channel>\n",
-		"",
+		"\tUsage:		megabas <id> adcrd <channel>\n", "",
 		"\tExample:		megabas 0 adcrd 2; Read the voltage input on 0-10V in channel #2 on Board #0\n"};
 
 int doAdcRead(int argc, char *argv[])
@@ -1414,12 +1485,9 @@ int doAdcRead(int argc, char *argv[])
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-int r1kGet(int dev, int ch, float* val)
+int r1kGet(int dev, int ch, float *val)
 {
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 	u16 raw = 0;
 
 	if ( (ch < CHANNEL_NR_MIN) || (ch > ADC_CH_NR_MAX))
@@ -1439,13 +1507,9 @@ int r1kGet(int dev, int ch, float* val)
 
 int doR1kRead(int argc, char *argv[]);
 const CliCmdType CMD_R1K_READ =
-	{
-		"r1krd",
-		2,
-		&doR1kRead,
+	{"r1krd", 2, &doR1kRead,
 		"\tr1krd:		Read resistor input  value (1k) in kiloOhms, Warning: You must palce the jumper in position \"1K\".\n\t\t\tReturn 30kOhm for resistor out of range\n",
-		"\tUsage:		megabas <id> r1krd <channel>\n",
-		"",
+		"\tUsage:		megabas <id> r1krd <channel>\n", "",
 		"\tExample:	megabas 0 r1krd 2; Read the resistance input on channel #2 on Board #0\n"};
 
 int doR1kRead(int argc, char *argv[])
@@ -1485,12 +1549,9 @@ int doR1kRead(int argc, char *argv[])
 	return OK;
 }
 
-int r10kGet(int dev, int ch, float* val)
+int r10kGet(int dev, int ch, float *val)
 {
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 	u16 raw = 0;
 
 	if ( (ch < CHANNEL_NR_MIN) || (ch > ADC_CH_NR_MAX))
@@ -1510,13 +1571,9 @@ int r10kGet(int dev, int ch, float* val)
 
 int doR10kRead(int argc, char *argv[]);
 const CliCmdType CMD_R10K_READ =
-	{
-		"r10krd",
-		2,
-		&doR10kRead,
+	{"r10krd", 2, &doR10kRead,
 		"\tr10krd:		Read resistor input  value (10k) in kiloOhms, Warning: You must palce the jumper in position \"10K\".\n\t\t\tReturn 30kOhm for resistor out of range\n",
-		"\tUsage:		megabas <id> r10krd <channel>\n",
-		"",
+		"\tUsage:		megabas <id> r10krd <channel>\n", "",
 		"\tExample:	megabas 0 r10krd 2; Read the resistance input on channel #2 on Board #0\n"};
 
 int doR10kRead(int argc, char *argv[])
@@ -1585,13 +1642,9 @@ void getCalStat(int dev)
 
 int doAdcCal(int argc, char *argv[]);
 const CliCmdType CMD_ADC_CAL =
-	{
-		"adccal",
-		2,
-		&doAdcCal,
+	{"adccal", 2, &doAdcCal,
 		"\tadccal:		Calibrate one ADC channel, the calibration must be done in 2 points at min 5V apart\n",
-		"\tUsage:		megabas <id> adccal <channel> <value>\n",
-		"",
+		"\tUsage:		megabas <id> adccal <channel> <value>\n", "",
 		"\tExample:		megabas 0 adccal 2 0.5; Calibrate the voltage input on ADC channel #2 on Board #0 at 0.5V\n"};
 
 int doAdcCal(int argc, char *argv[])
@@ -1599,10 +1652,7 @@ int doAdcCal(int argc, char *argv[])
 	int ch = 0;
 	float val = 0;
 	int dev = 0;
-	u8 buff[4] =
-	{
-		0,
-		0};
+	u8 buff[4] = {0, 0};
 	u16 raw = 0;
 
 	dev = doBoardInit(atoi(argv[1]));
@@ -1649,13 +1699,9 @@ int doAdcCal(int argc, char *argv[])
 
 int doAdcCalRst(int argc, char *argv[]);
 const CliCmdType CMD_ADC_CAL_RST =
-	{
-		"adccalrst",
-		2,
-		&doAdcCalRst,
+	{"adccalrst", 2, &doAdcCalRst,
 		"\tadccalrst:	Reset the calibration for one ADC channel\n",
-		"\tUsage:		megabas <id> adccalrst <channel>\n",
-		"",
+		"\tUsage:		megabas <id> adccalrst <channel>\n", "",
 		"\tExample:		megabas 0 adccalrst 2 ; Reset the calibration on ADC channel #2 on Board #0 at factory default\n"};
 
 int doAdcCalRst(int argc, char *argv[])
@@ -1663,12 +1709,7 @@ int doAdcCalRst(int argc, char *argv[])
 	int ch = 0;
 
 	int dev = 0;
-	u8 buff[4] =
-	{
-		0,
-		0,
-		0,
-		0};
+	u8 buff[4] = {0, 0, 0, 0};
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -1707,13 +1748,9 @@ int doAdcCalRst(int argc, char *argv[])
 
 int doDacCal(int argc, char *argv[]);
 const CliCmdType CMD_DAC_CAL =
-	{
-		"daccal",
-		2,
-		&doDacCal,
+	{"daccal", 2, &doDacCal,
 		"\tdaccal:		Calibrate one DAC channel, the calibration must be done in 2 points at min 5V apart\n",
-		"\tUsage:		megabas <id> daccal <channel> <value>\n",
-		"",
+		"\tUsage:		megabas <id> daccal <channel> <value>\n", "",
 		"\tExample:		megabas 0 daccal 2 0.5; Calibrate the voltage outputs on DAC channel #2 on Board #0 at 0.5V\n"};
 
 int doDacCal(int argc, char *argv[])
@@ -1721,10 +1758,7 @@ int doDacCal(int argc, char *argv[])
 	int ch = 0;
 	float val = 0;
 	int dev = 0;
-	u8 buff[4] =
-	{
-		0,
-		0};
+	u8 buff[4] = {0, 0};
 	u16 raw = 0;
 
 	dev = doBoardInit(atoi(argv[1]));
@@ -1771,13 +1805,9 @@ int doDacCal(int argc, char *argv[])
 
 int doDacCalRst(int argc, char *argv[]);
 const CliCmdType CMD_DAC_CAL_RST =
-	{
-		"daccalrst",
-		2,
-		&doDacCalRst,
+	{"daccalrst", 2, &doDacCalRst,
 		"\tdaccalrst:	Reset calibration for one DAC channel\n",
-		"\tUsage:		megabas <id> daccalrst <channel>\n",
-		"",
+		"\tUsage:		megabas <id> daccalrst <channel>\n", "",
 		"\tExample:		megabas 0 daccalrst 2; Reset calibration data on DAC channel #2 on Board #0 at factory default\n"};
 
 int doDacCalRst(int argc, char *argv[])
@@ -1785,12 +1815,7 @@ int doDacCalRst(int argc, char *argv[])
 	int ch = 0;
 
 	int dev = 0;
-	u8 buff[4] =
-	{
-		0,
-		0,
-		0,
-		0};
+	u8 buff[4] = {0, 0, 0, 0};
 	u16 raw = 0;
 
 	dev = doBoardInit(atoi(argv[1]));
@@ -1829,22 +1854,15 @@ int doDacCalRst(int argc, char *argv[])
 
 int doWdtReload(int argc, char *argv[]);
 const CliCmdType CMD_WDT_RELOAD =
-	{
-		"wdtr",
-		2,
-		&doWdtReload,
+	{"wdtr", 2, &doWdtReload,
 		"\twdtr:		Reload the watchdog timer and enable the watchdog if is disabled\n",
-		"\tUsage:		megabas <id> wdtr\n",
-		"",
+		"\tUsage:		megabas <id> wdtr\n", "",
 		"\tExample:		megabas 0 wdtr; Reload the watchdog timer on Board #0 with the period \n"};
 
 int doWdtReload(int argc, char *argv[])
 {
 	int dev = 0;
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -1871,23 +1889,16 @@ int doWdtReload(int argc, char *argv[])
 
 int doWdtSetPeriod(int argc, char *argv[]);
 const CliCmdType CMD_WDT_SET_PERIOD =
-	{
-		"wdtpwr",
-		2,
-		&doWdtSetPeriod,
+	{"wdtpwr", 2, &doWdtSetPeriod,
 		"\twdtpwr:		Set the watchdog period in seconds, \n\t\t\treload command must be issue in this interval to prevent Raspberry Pi power off\n",
-		"\tUsage:		megabas <id> wdtpwr <val> \n",
-		"",
+		"\tUsage:		megabas <id> wdtpwr <val> \n", "",
 		"\tExample:		megabas 0 wdtpwr 10; Set the watchdog timer period on Board #0 at 10 seconds \n"};
 
 int doWdtSetPeriod(int argc, char *argv[])
 {
 	int dev = 0;
 	u16 period;
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -1920,23 +1931,16 @@ int doWdtSetPeriod(int argc, char *argv[])
 
 int doWdtGetPeriod(int argc, char *argv[]);
 const CliCmdType CMD_WDT_GET_PERIOD =
-	{
-		"wdtprd",
-		2,
-		&doWdtGetPeriod,
+	{"wdtprd", 2, &doWdtGetPeriod,
 		"\twdtprd:		Get the watchdog period in seconds, \n\t\t\treload command must be issue in this interval to prevent Raspberry Pi power off\n",
-		"\tUsage:		megabas <id> wdtprd \n",
-		"",
+		"\tUsage:		megabas <id> wdtprd \n", "",
 		"\tExample:		megabas 0 wdtprd; Get the watchdog timer period on Board #0\n"};
 
 int doWdtGetPeriod(int argc, char *argv[])
 {
 	int dev = 0;
 	u16 period;
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -1964,23 +1968,16 @@ int doWdtGetPeriod(int argc, char *argv[])
 
 int doWdtSetInitPeriod(int argc, char *argv[]);
 const CliCmdType CMD_WDT_SET_INIT_PERIOD =
-	{
-		"wdtipwr",
-		2,
-		&doWdtSetInitPeriod,
+	{"wdtipwr", 2, &doWdtSetInitPeriod,
 		"\twdtipwr:	Set the watchdog initial period in seconds, \n\t\t\tThis period is loaded after power cycle, giving Raspberry time to boot\n",
-		"\tUsage:		megabas <id> wdtipwr <val> \n",
-		"",
+		"\tUsage:		megabas <id> wdtipwr <val> \n", "",
 		"\tExample:		megabas 0 wdtipwr 10; Set the watchdog timer initial period on Board #0 at 10 seconds \n"};
 
 int doWdtSetInitPeriod(int argc, char *argv[])
 {
 	int dev = 0;
 	u16 period;
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -2013,23 +2010,16 @@ int doWdtSetInitPeriod(int argc, char *argv[])
 
 int doWdtGetInitPeriod(int argc, char *argv[]);
 const CliCmdType CMD_WDT_GET_INIT_PERIOD =
-	{
-		"wdtiprd",
-		2,
-		&doWdtGetInitPeriod,
+	{"wdtiprd", 2, &doWdtGetInitPeriod,
 		"\twdtiprd:	Get the watchdog initial period in seconds. \n\t\t\tThis period is loaded after power cycle, giving Raspberry time to boot\n",
-		"\tUsage:		megabas <id> wdtiprd \n",
-		"",
+		"\tUsage:		megabas <id> wdtiprd \n", "",
 		"\tExample:		megabas 0 wdtiprd; Get the watchdog timer initial period on Board #0\n"};
 
 int doWdtGetInitPeriod(int argc, char *argv[])
 {
 	int dev = 0;
 	u16 period;
-	u8 buff[2] =
-	{
-		0,
-		0};
+	u8 buff[2] = {0, 0};
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -2057,25 +2047,16 @@ int doWdtGetInitPeriod(int argc, char *argv[])
 
 int doWdtSetOffPeriod(int argc, char *argv[]);
 const CliCmdType CMD_WDT_SET_OFF_PERIOD =
-	{
-		"wdtopwr",
-		2,
-		&doWdtSetOffPeriod,
+	{"wdtopwr", 2, &doWdtSetOffPeriod,
 		"\twdtopwr:	Set the watchdog off period in seconds (max 48 days). \n\t\t\tThis is the time that watchdog mantain Raspberry turned off \n",
-		"\tUsage:		megabas <id> wdtopwr <val> \n",
-		"",
+		"\tUsage:		megabas <id> wdtopwr <val> \n", "",
 		"\tExample:		megabas 0 wdtopwr 10; Set the watchdog off interval on Board #0 at 10 seconds \n"};
 
 int doWdtSetOffPeriod(int argc, char *argv[])
 {
 	int dev = 0;
 	u32 period;
-	u8 buff[4] =
-	{
-		0,
-		0,
-		0,
-		0};
+	u8 buff[4] = {0, 0, 0, 0};
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -2109,25 +2090,16 @@ int doWdtSetOffPeriod(int argc, char *argv[])
 
 int doWdtGetOffPeriod(int argc, char *argv[]);
 const CliCmdType CMD_WDT_GET_OFF_PERIOD =
-	{
-		"wdtoprd",
-		2,
-		&doWdtGetOffPeriod,
+	{"wdtoprd", 2, &doWdtGetOffPeriod,
 		"\twdtoprd:	Get the watchdog off period in seconds (max 48 days) \n\t\t\tThis is the time that watchdog mantain Raspberry turned off \n",
-		"\tUsage:		megabas <id> wdtoprd \n",
-		"",
+		"\tUsage:		megabas <id> wdtoprd \n", "",
 		"\tExample:		megabas 0 wdtoprd; Get the watchdog off period on Board #0\n"};
 
 int doWdtGetOffPeriod(int argc, char *argv[])
 {
 	int dev = 0;
 	u32 period;
-	u8 buff[4] =
-	{
-		0,
-		0,
-		0,
-		0};
+	u8 buff[4] = {0, 0, 0, 0};
 
 	dev = doBoardInit(atoi(argv[1]));
 	if (dev <= 0)
@@ -2158,8 +2130,8 @@ int rs485Set(int dev, u8 mode, u32 baud, u8 stopB, u8 parity, u8 add)
 {
 	ModbusSetingsType settings;
 	u8 buff[5];
-	
-	if(0 == mode)//disable modbus
+
+	if (0 == mode) //disable modbus
 	{
 		baud = 9600;
 		stopB = 1;
@@ -2224,14 +2196,9 @@ int rs485Get(int dev)
 }
 
 int doRs485Read(int argc, char *argv[]);
-const CliCmdType CMD_RS485_READ =
-{
-	"rs485rd",
-	2,
-	&doRs485Read,
+const CliCmdType CMD_RS485_READ = {"rs485rd", 2, &doRs485Read,
 	"\trs485rd:	Read the RS485 communication settings\n",
-	"\tUsage:		megabas <id> rs485rd\n",
-	"",
+	"\tUsage:		megabas <id> rs485rd\n", "",
 	"\tExample:		megabas 0 rs485rd; Read the RS485 settings on Board #0\n"};
 
 int doRs485Read(int argc, char *argv[])
@@ -2261,10 +2228,7 @@ int doRs485Read(int argc, char *argv[])
 
 int doRs485Write(int argc, char *argv[]);
 const CliCmdType CMD_RS485_WRITE =
-	{
-		"rs485wr",
-		2,
-		&doRs485Write,
+	{"rs485wr", 2, &doRs485Write,
 		"\trs485wr:	Write the RS485 communication settings\n",
 		"\tUsage:		megabas <id> rs485wr <mode> <baudrate> <stopBits> <parity> <slaveAddr>\n",
 		"",
@@ -2308,13 +2272,9 @@ int doRs485Write(int argc, char *argv[])
 
 int doRTCGet(int argc, char *argv[]);
 const CliCmdType CMD_RTC_GET =
-	{
-		"rtcrd",
-		2,
-		&doRTCGet,
+	{"rtcrd", 2, &doRTCGet,
 		"\trtcrd:		Get the internal RTC  date and time(mm/dd/yy hh:mm:ss)\n",
-		"\tUsage:		megbas <id> rtcrd \n",
-		"",
+		"\tUsage:		megbas <id> rtcrd \n", "",
 		"\tExample:	megabas 0 rtcrd; Get the nternal RTC time and date on Board #0\n"};
 
 int doRTCGet(int argc, char *argv[])
@@ -2349,13 +2309,9 @@ int doRTCGet(int argc, char *argv[])
 
 int doRTCSet(int argc, char *argv[]);
 const CliCmdType CMD_RTC_SET =
-	{
-		"rtcwr",
-		2,
-		&doRTCSet,
+	{"rtcwr", 2, &doRTCSet,
 		"\trtcwr:		Set the internal RTC  date and time(mm/dd/yy hh:mm:ss)\n",
-		"\tUsage:		megabas <id> rtcwr <mm> <dd> <yy> <hh> <mm> <ss> \n",
-		"",
+		"\tUsage:		megabas <id> rtcwr <mm> <dd> <yy> <hh> <mm> <ss> \n", "",
 		"\tExample:	megabas 0 rtcwr 9 15 20 21 43 15; Set the internal RTC time and date on Board #0 at Sept/15/2020  21:43:15\n"};
 
 int doRTCSet(int argc, char *argv[])
@@ -2372,43 +2328,43 @@ int doRTCSet(int argc, char *argv[])
 
 	if (argc == 9)
 	{
-		i = atoi(argv[3]);//month
-		if(i < 1 || i > 12)
+		i = atoi(argv[3]); //month
+		if (i < 1 || i > 12)
 		{
 			printf("Invalid month!\n");
 			exit(1);
 		}
 		buff[1] = i;
 		i = atoi(argv[4]);
-		if(i < 1 || i > 31)
+		if (i < 1 || i > 31)
 		{
 			printf("Invalid date!\n");
 			exit(1);
 		}
 		buff[2] = i;
 		i = atoi(argv[5]);
-		if(i < 0 || i > 99)
+		if (i < 0 || i > 99)
 		{
 			printf("Invalid year!\n");
 			exit(1);
 		}
 		buff[0] = i;
 		i = atoi(argv[6]);
-		if(i < 0 || i > 23)
+		if (i < 0 || i > 23)
 		{
 			printf("Invalid hour!\n");
 			exit(1);
 		}
 		buff[3] = i;
 		i = atoi(argv[7]);
-		if(i < 0 || i > 59)
+		if (i < 0 || i > 59)
 		{
 			printf("Invalid minute!\n");
 			exit(1);
 		}
 		buff[4] = i;
 		i = atoi(argv[8]);
-		if(i < 0 || i > 59)
+		if (i < 0 || i > 59)
 		{
 			printf("Invalid second!\n");
 			exit(1);
@@ -2432,13 +2388,9 @@ int doRTCSet(int argc, char *argv[])
 
 int doOwbGet(int argc, char *argv[]);
 const CliCmdType CMD_OWB_RD =
-	{
-		"owbtrd",
-		2,
-		&doOwbGet,
+	{"owbtrd", 2, &doOwbGet,
 		"\towbtrd		Display the temperature readed from a one wire bus connected sensor\n",
-		"\tUsage:		megabas <id> owbtrd <sensor (1..16)>\n",
-		"",
+		"\tUsage:		megabas <id> owbtrd <sensor (1..16)>\n", "",
 		"\tExample:		megabas 0 owbtrd 1 Display the temperature of the sensor #1\n"};
 
 int doOwbGet(int argc, char *argv[])
@@ -2454,7 +2406,7 @@ int doOwbGet(int argc, char *argv[])
 		return ARG_CNT_ERR;
 	}
 	channel = atoi(argv[3]);
-	if(channel < 1 || channel > 16)
+	if (channel < 1 || channel > 16)
 	{
 		return ERROR;
 	}
@@ -2469,13 +2421,14 @@ int doOwbGet(int argc, char *argv[])
 		printf("Fail to read one wire bus info!\n");
 		return ERROR;
 	}
-	if(channel > buff[0])
+	if (channel > buff[0])
 	{
 		printf("Invalid channel number, only %d sensors connected!\n", buff[0]);
 		return ERROR;
 	}
-	
-	resp = i2cMem8Read(dev, I2C_MEM_1WB_T1 + (channel - 1) *OWB_TEMP_SIZE_B , buff, OWB_TEMP_SIZE_B);
+
+	resp = i2cMem8Read(dev, I2C_MEM_1WB_T1 + (channel - 1) * OWB_TEMP_SIZE_B,
+		buff, OWB_TEMP_SIZE_B);
 	if (FAIL == resp)
 	{
 		printf("Fail to read one wire bus info!\n");
@@ -2493,16 +2446,11 @@ int doOwbGet(int argc, char *argv[])
 	return OK;
 }
 
-
 int doOwbIdGet(int argc, char *argv[]);
 const CliCmdType CMD_OWB_ID_RD =
-	{
-		"owbidrd",
-		2,
-		&doOwbIdGet,
+	{"owbidrd", 2, &doOwbIdGet,
 		"\towbidrd		Display the 64bits ROM ID of the one wire bus connected sensor\n",
-		"\tUsage:		megabas <id> owbidrd <sensor (1..16)>\n",
-		"",
+		"\tUsage:		megabas <id> owbidrd <sensor (1..16)>\n", "",
 		"\tExample:		megabas 0 owbidrd 1 Display the ROM ID of the sensor #1\n"};
 
 int doOwbIdGet(int argc, char *argv[])
@@ -2518,7 +2466,7 @@ int doOwbIdGet(int argc, char *argv[])
 		return ARG_CNT_ERR;
 	}
 	channel = atoi(argv[3]);
-	if(channel < 1 || channel > 16)
+	if (channel < 1 || channel > 16)
 	{
 		return ERROR;
 	}
@@ -2528,25 +2476,25 @@ int doOwbIdGet(int argc, char *argv[])
 		return ERROR;
 	}
 	buff[0] = 0xff & (channel - 1);
-	resp = i2cMem8Write(dev, I2C_MEM_1WB_ROM_CODE_IDX, buff, 1);//Select sensor ID to read
+	resp = i2cMem8Write(dev, I2C_MEM_1WB_ROM_CODE_IDX, buff, 1); //Select sensor ID to read
 	if (FAIL == resp)
 	{
 		printf("Fail to read one wire bus info!\n");
 		return ERROR;
 	}
-	resp = i2cMem8Read(dev, I2C_MEM_1WB_DEV, buff, 1);//check the number of connected sensors
+	resp = i2cMem8Read(dev, I2C_MEM_1WB_DEV, buff, 1); //check the number of connected sensors
 	if (FAIL == resp)
 	{
 		printf("Fail to read one wire bus info!\n");
 		return ERROR;
 	}
-	if(channel > buff[0])
+	if (channel > buff[0])
 	{
 		printf("Invalid channel number, only %d sensors connected!\n", buff[0]);
 		return ERROR;
 	}
-	
-	resp = i2cMem8Read(dev, I2C_MEM_1WB_ROM_CODE , buff, 8);
+
+	resp = i2cMem8Read(dev, I2C_MEM_1WB_ROM_CODE, buff, 8);
 	if (FAIL == resp)
 	{
 		printf("Fail to read one wire bus info!\n");
@@ -2554,20 +2502,15 @@ int doOwbIdGet(int argc, char *argv[])
 	}
 
 	memcpy(&romID, &buff[0], 8);
-	
+
 	printf("0x%llx\n", romID);
 	return OK;
 }
 
 int doOwbSensCountRead(int argc, char *argv[]);
-const CliCmdType CMD_OWB_SNS_CNT_RD =
-{
-	"owbcntrd",
-	2,
-	&doOwbSensCountRead,
+const CliCmdType CMD_OWB_SNS_CNT_RD = {"owbcntrd", 2, &doOwbSensCountRead,
 	"\towbcntrd		Display the number of One Wire Bus connected sensors\n",
-	"\tUsage:		megabas <id> owbcntrd\n",
-	"",
+	"\tUsage:		megabas <id> owbcntrd\n", "",
 	"\tExample:		megabas 0 owbcntrd  Display the number of sensors connected\n"};
 
 int doOwbSensCountRead(int argc, char *argv[])
@@ -2575,7 +2518,7 @@ int doOwbSensCountRead(int argc, char *argv[])
 	int dev = -1;
 	u8 buff[2];
 	int resp = 0;
-	
+
 	if (argc != 3)
 	{
 		return ARG_CNT_ERR;
@@ -2596,16 +2539,10 @@ int doOwbSensCountRead(int argc, char *argv[])
 	return OK;
 }
 
-
 int doOwbScan(int argc, char *argv[]);
-const CliCmdType CMD_OWB_SCAN =
-{
-	"owbscan",
-	2,
-	&doOwbScan,
+const CliCmdType CMD_OWB_SCAN = {"owbscan", 2, &doOwbScan,
 	"\towbscan		Start One Wire Bus scaning procedure\n",
-	"\tUsage:		megabas <id> owbscan\n",
-	"",
+	"\tUsage:		megabas <id> owbscan\n", "",
 	"\tExample:		megabas 0 owbscan  Start One Wire Bus scaning procedure\n"};
 
 int doOwbScan(int argc, char *argv[])
@@ -2613,7 +2550,7 @@ int doOwbScan(int argc, char *argv[])
 	int dev = -1;
 	u8 buff[2];
 	int resp = 0;
-	
+
 	if (argc != 3)
 	{
 		return ARG_CNT_ERR;
@@ -2635,46 +2572,16 @@ int doOwbScan(int argc, char *argv[])
 	return OK;
 }
 
-
-const CliCmdType* gCmdArray[] =
-{
-	&CMD_VERSION,
-	&CMD_HELP,
-	&CMD_WAR,
-	&CMD_LIST,
-	&CMD_BOARD,
-	&CMD_TRIAC_WRITE,
-	&CMD_TRIAC_READ,
-	&CMD_TEST,
-	&CMD_CONTACT_READ,
-	&CMD_COUNTER_READ,
-	&CMD_COUNTER_RST,
-	&CMD_EDGE_READ,
-	&CMD_EDGE_WRITE,
-	&CMD_DAC_READ,
-	&CMD_DAC_WRITE,
-	&CMD_ADC_READ,
-	&CMD_R1K_READ,
-	&CMD_R10K_READ,
-	&CMD_ADC_CAL,
-	&CMD_ADC_CAL_RST,
-	&CMD_DAC_CAL,
-	&CMD_DAC_CAL_RST,
-	&CMD_WDT_RELOAD,
-	&CMD_WDT_SET_PERIOD,
-	&CMD_WDT_GET_PERIOD,
-	&CMD_WDT_SET_INIT_PERIOD,
-	&CMD_WDT_GET_INIT_PERIOD,
-	&CMD_WDT_SET_OFF_PERIOD,
-	&CMD_WDT_GET_OFF_PERIOD,
-	&CMD_RS485_READ,
-	&CMD_RS485_WRITE,
-	&CMD_RTC_GET,
-	&CMD_RTC_SET,
-	&CMD_OWB_RD,
-	&CMD_OWB_ID_RD,
-	&CMD_OWB_SNS_CNT_RD,
-	&CMD_OWB_SCAN,
+const CliCmdType *gCmdArray[] = {&CMD_VERSION, &CMD_HELP, &CMD_WAR, &CMD_LIST,
+	&CMD_BOARD, &CMD_TRIAC_WRITE, &CMD_TRIAC_READ, &CMD_TEST, &CMD_CONTACT_READ,
+	&CMD_COUNTER_READ, &CMD_COUNTER_RST, &CMD_EDGE_READ, &CMD_EDGE_WRITE,
+	&CMD_DAC_READ, &CMD_DAC_WRITE, &CMD_ADC_READ, &CMD_R1K_READ, &CMD_R10K_READ,
+	&CMD_ADC_CAL, &CMD_ADC_CAL_RST, &CMD_DAC_CAL, &CMD_DAC_CAL_RST,
+	&CMD_WDT_RELOAD, &CMD_WDT_SET_PERIOD, &CMD_WDT_GET_PERIOD,
+	&CMD_WDT_SET_INIT_PERIOD, &CMD_WDT_GET_INIT_PERIOD, &CMD_WDT_SET_OFF_PERIOD,
+	&CMD_WDT_GET_OFF_PERIOD, &CMD_RS485_READ, &CMD_RS485_WRITE, &CMD_RTC_GET,
+	&CMD_RTC_SET, &CMD_OWB_RD, &CMD_OWB_ID_RD, &CMD_OWB_SNS_CNT_RD,
+	&CMD_OWB_SCAN,&CMD_EXTI_READ, &CMD_EXTI_WRITE, &CMD_BUTTON_READ,
 	NULL}; //null terminated array of cli structure pointers
 
 int main(int argc, char *argv[])
