@@ -8,7 +8,7 @@ This is the python library to control the [ Building Automation Card for Raspber
 ## Install
 
 ```bash
-sudo pip install megabas
+sudo pip install SMmegabas
 ```
 
 ## Usage

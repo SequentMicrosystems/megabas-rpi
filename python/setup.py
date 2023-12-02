@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name='megabas',
+    name='SMmegabas',
     packages=setuptools.find_packages(),
     version='1.0.0',
     license='MIT',
