@@ -35,7 +35,7 @@ install: megabas
 	$Q echo "[Install]"
 	$Q cp megabas		$(DESTDIR)$(PREFIX)/bin
 ifneq ($(WIRINGPI_SUID),0)
-	$Q chown root.root	$(DESTDIR)$(PREFIX)/bin/megabas
+	$Q chown root:root	$(DESTDIR)$(PREFIX)/bin/megabas
 	$Q chmod 4755		$(DESTDIR)$(PREFIX)/bin/megabas
 endif
 #	$Q mkdir -p		$(DESTDIR)$(PREFIX)/man/man1
