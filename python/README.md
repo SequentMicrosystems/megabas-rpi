@@ -104,6 +104,16 @@ stack - stack level of the megabas  card (selectable from address jumpers [0..8]
 value - 4 bit value of all triacs (ex: 15: turn on all triacs, 0: turn off all triacs, 1:turn on triac #1 and off the rest)
 
 
+### getTriac(stack, ch)
+Return the state of one triac.
+
+stack - stack level of the megabas  card (selectable from address jumpers [0..8])
+
+ch - triac number (id) [1..4]
+
+return - (0/1)
+
+
 ### getTriacs(stack)
 Return the state of all triacs.
 
