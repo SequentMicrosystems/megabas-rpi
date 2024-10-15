@@ -185,6 +185,15 @@ def getTriacs(stack):
     return val
 
 
+def getTriac(stack, ch):
+    checkStack(stack)
+    bus = smbus2.SMBus(BUS_NO)
+    val = bus.read_byte_data(HW_ADD + stack, TRIACS_VAL_ADD)
+    bus.close()
+    mask = (1 << (ch - 1))
+    return val & mask
+
+
 def setTriacs(stack, val):
     checkStack(stack)
     bus = smbus2.SMBus(BUS_NO)
