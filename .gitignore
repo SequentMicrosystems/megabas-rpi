@@ -3,4 +3,4 @@
 
 /python/build/
 /python/dist/
-/python/SMmegabas.egg-info/
+/python/*.egg-info/

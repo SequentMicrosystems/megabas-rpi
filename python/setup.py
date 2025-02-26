@@ -1,9 +1,9 @@
 import setuptools
 
 setuptools.setup(
-    name='SMmegabas',
+    name='smmegabas',
     packages=setuptools.find_packages(),
-    version='1.0.2',
+    version='1.0.3',
     license='MIT',
     description='Library to control Sequent Microsystems megabas Card',
     author='Sequent Microsystems',
