@@ -25,7 +25,7 @@ Now you can access all the functions of the BAS board through the command "megab
 ```bash
 ~$ megabas -h
 ```
- ## Command line update
+ ## Update
 If you clone the repository, any update can be made with the following commands:
 
 ```bash
@@ -38,7 +38,7 @@ If you clone the repository, any update can be made with the following commands:
 For cards version 5.0 and up, input types are not dipswitch selectable, as for the previous versions, but software selectable. 
 The default setting of the Inputs type is 0-10V, to change it:
 
- 1) Make sure you have the latest software installed, as explained above
+ 1) Make sure you have the latest ```megabas``` command installed, as explained above.
  2) Run the command ```megabas <stack> incfgwr <channel> <value>```, where
       * stack = 0 - 7, Stack level selectable from ID0, ID1, ID2 dipswitches
       * channel = 1 - 8, Channel number you need to modify
