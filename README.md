@@ -47,6 +47,8 @@ The default setting of the Inputs type is 0-10V, to change it:
 For more info on the commands' parameters run ```megabas -h incfgwr``` and ```megabas -h incfgrd```.
 The input type settings are saved into the card's nonvolatile memory, so will be preserved after power-down.
 
+## Additional Drivers
+
 [Python Library](python/README.md)
 
 [Firmware update instructions](update/README.md).
