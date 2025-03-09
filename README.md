@@ -35,7 +35,7 @@ If you clone the repository, any update can be made with the following commands:
 ```
 ## Software selectable input type
 
-For cards version 5.0 and up, input types are not selectable from the dipswitches but from the software. 
+For cards version 5.0 and up, input types are not dipswitch selectable, as for the previous versions, but software selectable. 
 The default setting of the Inputs type is 0-10V, to change it:
 
  1) Make sure you have the latest software installed, as explained above
