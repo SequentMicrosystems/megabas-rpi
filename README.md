@@ -40,9 +40,9 @@ The default setting of the Inputs type is 0-10V, to change it:
 
  1) Make sure you have the latest software installed, as explained above
  2) Run the command ```megabas <stack> incfgwr <channel> <value>```, where
-* stack = 0 - 7, Stack level selectable from ID0, ID1, ID2 dipswitches
-* channel = 1 - 8, Channel number you need to modify
-* value = 0 for 0-10V, 1 for 1K Thermistor or Dry contact, 2 for 10K Thermistor
+      * stack = 0 - 7, Stack level selectable from ID0, ID1, ID2 dipswitches
+      * channel = 1 - 8, Channel number you need to modify
+      * value = 0 for 0-10V, 1 for 1K Thermistor or Dry contact, 2 for 10K Thermistor
 
 For more info on the commands' parameters run ```megabas -h incfgwr``` and ```megabas -h incfgrd```.
 The input type settings are saved into the card's nonvolatile memory, so will be preserved after power-down.
