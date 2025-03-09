@@ -44,7 +44,8 @@ The default setting of the Inputs type is 0-10V, to change it:
 * channel = 1 - 8, Channel number you need to modify
 * value = 0 for 0-10V, 1 for 1K Thermistor or Dry contact, 2 for 10K Thermistor
 
-For more info on the commands parameters ```megabas -h incfgwr``` and ```megabas -h incfgrd```
+For more info on the commands' parameters run ```megabas -h incfgwr``` and ```megabas -h incfgrd```.
+The input type settings are saved into the card's nonvolatile memory, so will be preserved after power-down.
 
 [Python Library](python/README.md)
 
