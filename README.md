@@ -47,7 +47,7 @@ The default setting of the Inputs type is 0-10V, to change it:
 For more info on the commands' parameters run ```megabas -h incfgwr``` and ```megabas -h incfgrd```.
 The input type settings are saved into the card's nonvolatile memory, so will be preserved after power-down.
 
-## Additional Drivers
+## Additional Drivers / Resources
 
 [Python Library](python/README.md)
 
@@ -56,5 +56,11 @@ The input type settings are saved into the card's nonvolatile memory, so will be
 [Node-RED](https://github.com/SequentMicrosystems/megabas-rpi/tree/master/node-red-contrib-sm-bas)
 
 [CODESYS Driver](https://github.com/SequentMicrosystems/megabas-rpi/tree/master/CODESYS)
+
+[Home Assistant Integration](https://github.com/SequentMicrosystems/SMmegabas-ha)
+
+[Open PLC](https://openplcproject.com/)
+
+[Arduino Library](https://github.com/SequentMicrosystems/Sequent-Building-Automation-Library)
 
 The board can act as Modbus RTU slave device, checkout [modbus instructions](MODBUS.md)
