@@ -1,6 +1,8 @@
+#c cli build
+*.o
+megabas
 
 #python build dirs
-
 /python/build/
 /python/dist/
-/python/SMmegabas.egg-info/
+/python/*.egg-info/
