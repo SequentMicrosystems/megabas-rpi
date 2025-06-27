@@ -20,7 +20,7 @@
 
 #define VERSION_BASE	(int)1
 #define VERSION_MAJOR	(int)2
-#define VERSION_MINOR	(int)7
+#define VERSION_MINOR	(int)8
 
 #define UNUSED(X) (void)X      /* To avoid gcc/g++ warnings */
 
@@ -383,7 +383,13 @@ int triacSet(int dev, int val)
 {
 	u8 buff[2];
 
-	buff[0] = 0x0f & val;
+	// preserve the LED'S
+	if (FAIL == i2cMem8Read(dev, I2C_TRIACS_VAL_ADD, buff, 1))
+		{
+			return FAIL;
+		}
+	buff[0] &= 0xf0;
+	buff[0] |= 0x0f & val;
 
 	return i2cMem8Write(dev, I2C_TRIACS_VAL_ADD, buff, 1);
 }
@@ -400,7 +406,7 @@ int triacGet(int dev, int *val)
 	{
 		return ERROR;
 	}
-	*val = buff[0];
+	*val = 0x0f & buff[0];
 	return OK;
 }
 
@@ -719,6 +725,282 @@ int doTriacTest(int argc, char *argv[])
 	triacSet(dev, 0);
 	return OK;
 }
+
+//=============================== LED's ====================================
+int ledChSet(int dev, u8 channel, OutStateEnumType state)
+{
+	int resp = 0;
+	u8 buff[2];
+
+	if ( (channel < CHANNEL_NR_MIN) || (channel > TRIAC_CH_NR_MAX))
+	{
+		printf("Invalid led nr!\n");
+		return ERROR;
+	}
+	if (FAIL == i2cMem8Read(dev, I2C_TRIACS_VAL_ADD, buff, 1))
+	{
+		return FAIL;
+	}
+	channel += 4; // leds are upper nible
+	switch (state)
+	{
+	case OFF:
+		buff[0] &= ~ (1 << (channel - 1));
+		resp = i2cMem8Write(dev, I2C_TRIACS_VAL_ADD, buff, 1);
+		break;
+	case ON:
+		buff[0] |= 1 << (channel - 1);
+		resp = i2cMem8Write(dev, I2C_TRIACS_VAL_ADD, buff, 1);
+		break;
+	default:
+		printf("Invalid led state!\n");
+		return ERROR;
+		break;
+	}
+	return resp;
+}
+
+int ledChGet(int dev, u8 channel, OutStateEnumType *state)
+{
+	u8 buff[2];
+
+	if (NULL == state)
+	{
+		return ERROR;
+	}
+
+	if ( (channel < CHANNEL_NR_MIN) || (channel > TRIAC_CH_NR_MAX))
+	{
+		printf("Invalid led nr!\n");
+		return ERROR;
+	}
+	 channel += 4; // upper half of the byte
+
+	if (FAIL == i2cMem8Read(dev, I2C_TRIACS_VAL_ADD, buff, 1))
+	{
+		return ERROR;
+	}
+
+	if (buff[0] & (1 << (channel - 1)))
+	{
+		*state = ON;
+	}
+	else
+	{
+		*state = OFF;
+	}
+	return OK;
+}
+
+int ledSet(int dev, int val)
+{
+	u8 buff[2];
+
+	// preserve the triacs
+	if (FAIL == i2cMem8Read(dev, I2C_TRIACS_VAL_ADD, buff, 1))
+		{
+			return FAIL;
+		}
+	buff[0] &= 0x0f;
+	buff[0] |= 0xf0 & (val << 4);
+
+	return i2cMem8Write(dev, I2C_TRIACS_VAL_ADD, buff, 1);
+}
+
+int ledGet(int dev, int *val)
+{
+	u8 buff[2];
+
+	if (NULL == val)
+	{
+		return ERROR;
+	}
+	if (FAIL == i2cMem8Read(dev, I2C_TRIACS_VAL_ADD, buff, 1))
+	{
+		return ERROR;
+	}
+	*val = 0x0f & (buff[0] >> 4);
+	return OK;
+}
+int doLedWrite(int argc, char *argv[]);
+const CliCmdType CMD_LED_WRITE = {"ledwr", 2, &doLedWrite,
+	"\tledwr:		Set LED's On/Off\n",
+	"\tUsage:		megabas <id> ledwr <channel> <on/off>\n",
+	"\tUsage:		megabas <id> ledwr <value>\n",
+	"\tExample:		megabas 0 ledwr 2 1; Set Led #2 on Board #0 On\n"};
+
+int doLedWrite(int argc, char *argv[])
+{
+	int pin = 0;
+	OutStateEnumType state = STATE_COUNT;
+	int val = 0;
+	int dev = 0;
+	OutStateEnumType stateR = STATE_COUNT;
+	int valR = 0;
+	int retry = 0;
+
+	if ( (argc != 5) && (argc != 4))
+	{
+		printf("%s", CMD_LED_WRITE.usage1);
+		printf("%s", CMD_LED_WRITE.usage2);
+		exit(1);
+	}
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+	if (argc == 5)
+	{
+		pin = atoi(argv[3]);
+		if ( (pin < CHANNEL_NR_MIN) || (pin > TRIAC_CH_NR_MAX))
+		{
+			printf("Led channel number value out of range\n");
+			exit(1);
+		}
+
+		/**/if ( (strcasecmp(argv[4], "up") == 0)
+			|| (strcasecmp(argv[4], "on") == 0))
+			state = ON;
+		else if ( (strcasecmp(argv[4], "down") == 0)
+			|| (strcasecmp(argv[4], "off") == 0))
+			state = OFF;
+		else
+		{
+			if ( (atoi(argv[4]) >= STATE_COUNT) || (atoi(argv[4]) < 0))
+			{
+				printf("Invalid LED state!\n");
+				exit(1);
+			}
+			state = (OutStateEnumType)atoi(argv[4]);
+		}
+
+		retry = RETRY_TIMES;
+
+		while ( (retry > 0) && (stateR != state))
+		{
+			if (OK != ledChSet(dev, pin, state))
+			{
+				printf("Fail to write triac\n");
+				exit(1);
+			}
+			if (OK != ledChGet(dev, pin, &stateR))
+			{
+				printf("Fail to read triac\n");
+				exit(1);
+			}
+			retry--;
+		}
+#ifdef DEBUG_I
+		if(retry < RETRY_TIMES)
+		{
+			printf("retry %d times\n", 3-retry);
+		}
+#endif
+		if (retry == 0)
+		{
+			printf("Fail to write LED's\n");
+			exit(1);
+		}
+	}
+	else
+	{
+		val = atoi(argv[3]);
+		if (val < 0 || val > 0x0f)
+		{
+			printf("Invalid LED value\n");
+			exit(1);
+		}
+
+		retry = RETRY_TIMES;
+		valR = -1;
+		while ( (retry > 0) && (valR != val))
+		{
+
+			if (OK != ledSet(dev, val))
+			{
+				printf("Fail to write LED's!\n");
+				exit(1);
+			}
+			if (OK != ledGet(dev, &valR))
+			{
+				printf("Fail to read LED's!\n");
+				exit(1);
+			}
+		}
+		if (retry == 0)
+		{
+			printf("Fail to write LED's!\n");
+			exit(1);
+		}
+	}
+	return OK;
+}
+
+int doLedRead(int argc, char *argv[]);
+const CliCmdType CMD_LED_READ = {"ledrd", 2, &doLedRead,
+	"\tledrd:		Read LED's status\n",
+	"\tUsage:		megabas <id> ledrd <channel>\n", "\tUsage:		megabas <id> ledrd\n",
+	"\tExample:		megabas 0 ledrd 2; Read Status of Led #2 on Board #0\n"};
+
+int doLedRead(int argc, char *argv[])
+{
+	int pin = 0;
+	int val = 0;
+	int dev = 0;
+	OutStateEnumType state = STATE_COUNT;
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 4)
+	{
+		pin = atoi(argv[3]);
+		if ( (pin < CHANNEL_NR_MIN) || (pin > TRIAC_CH_NR_MAX))
+		{
+			printf("Led channel number value out of range!\n");
+			exit(1);
+		}
+
+		if (OK != ledChGet(dev, pin, &state))
+		{
+			printf("Fail to read!\n");
+			exit(1);
+		}
+		if (state != 0)
+		{
+			printf("1\n");
+		}
+		else
+		{
+			printf("0\n");
+		}
+	}
+	else if (argc == 3)
+	{
+		if (OK != ledGet(dev, &val))
+		{
+			printf("Fail to read!\n");
+			exit(1);
+		}
+		printf("%d\n", val);
+	}
+	else
+	{
+		printf("%s", CMD_LED_READ.usage1);
+		printf("%s", CMD_LED_READ.usage2);
+		exit(1);
+	}
+	return OK;
+}
+
+
+
+//============================== DIGITAL IN ===================================
 
 int contactChGet(int dev, u8 channel, OutStateEnumType *state)
 {
@@ -2747,7 +3029,7 @@ int doInCfgRead(int argc, char *argv[])
 
 
 const CliCmdType *gCmdArray[] = {&CMD_VERSION, &CMD_HELP, &CMD_WAR, &CMD_LIST,
-	&CMD_BOARD, &CMD_RESET, &CMD_TRIAC_WRITE, &CMD_TRIAC_READ, &CMD_TEST, &CMD_CONTACT_READ,
+	&CMD_BOARD, &CMD_RESET, &CMD_TRIAC_WRITE, &CMD_TRIAC_READ, &CMD_TEST, &CMD_LED_WRITE, &CMD_LED_READ, &CMD_CONTACT_READ,
 	&CMD_COUNTER_READ, &CMD_COUNTER_RST, &CMD_EDGE_READ, &CMD_EDGE_WRITE,
 	&CMD_DAC_READ, &CMD_DAC_WRITE, &CMD_ADC_READ, &CMD_R1K_READ, &CMD_R10K_READ,
 	&CMD_ADC_CAL, &CMD_ADC_CAL_RST, &CMD_DAC_CAL, &CMD_DAC_CAL_RST,
