@@ -20,7 +20,7 @@
 
 #define VERSION_BASE	(int)1
 #define VERSION_MAJOR	(int)2
-#define VERSION_MINOR	(int)8
+#define VERSION_MINOR	(int)9
 
 #define UNUSED(X) (void)X      /* To avoid gcc/g++ warnings */
 
@@ -2060,6 +2060,216 @@ int doAdcCalRst(int argc, char *argv[])
 	return OK;
 }
 
+int do1kCal(int argc, char *argv[]);
+const CliCmdType CMD_1K_CAL =
+	{"r1kcal", 2, &do1kCal,
+		"\tr1kcal:		Calibrate one 1k resistor input channel, the calibration must be done in 2 points at min 500 ohms apart\n",
+		"\tUsage:		megabas <id> r1kcal <channel> <value>\n", "",
+		"\tExample:		megabas 0 r1kcal 2 0.5; Calibrate the resistance input on 1k channel #2 on Board #0 at 0.5kOhms\n"};
+
+int do1kCal(int argc, char *argv[])
+{
+	int ch = 0;
+	float val = 0;
+	int dev = 0;
+	u8 buff[4] = {0, 0};
+	u16 raw = 0;
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 5)
+	{
+		ch = atoi(argv[3]);
+		if ( (ch < CHANNEL_NR_MIN) || (ch > ADC_CH_NR_MAX))
+		{
+			printf("ADC channel out of range!\n");
+			exit(1);
+		}
+
+		val = atof(argv[4]);
+		if ( (val < 0) || (val > 10))
+		{
+			printf("1k calibration value out of range!\n");
+			exit(1);
+		}
+		raw = (u16)ceil(val*1000);
+		memcpy(buff, &raw, 2);
+		buff[2] = ch + CAL_1K_IN_START_ID - 1;
+		buff[3] = CALIBRATION_KEY;
+
+		if (OK != i2cMem8Write(dev, I2C_MEM_CALIB_VALUE, buff, 4))
+		{
+			printf("Fail to write calibration data!\n");
+			exit(1);
+		}
+
+		getCalStat(dev);
+	}
+	else
+	{
+		printf("Invalid params number:\n %s", CMD_1K_CAL.usage1);
+		exit(1);
+	}
+	return OK;
+}
+
+
+int do1kCalRst(int argc, char *argv[]);
+const CliCmdType CMD_1K_CAL_RST =
+	{"r1kcalrst", 2, &do1kCalRst,
+		"\tr1kcalrst:	Reset the calibration for one 1k resistor input channel\n",
+		"\tUsage:		megabas <id> r1kcalrst <channel>\n", "",
+		"\tExample:		megabas 0 r1kcalrst 2 ; Reset the calibration on 1k channel #2 on Board #0 at factory default\n"};
+
+int do1kCalRst(int argc, char *argv[])
+{
+	int ch = 0;
+
+	int dev = 0;
+	u8 buff[4] = {0, 0, 0, 0};
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 4)
+	{
+		ch = atoi(argv[3]);
+		if ( (ch < CHANNEL_NR_MIN) || (ch > ADC_CH_NR_MAX))
+		{
+			printf("ADC channel out of range!\n");
+			exit(1);
+		}
+
+		buff[2] = ch + CAL_1K_IN_START_ID - 1;
+		buff[3] = RESET_CALIBRATION_KEY;
+
+		if (OK != i2cMem8Write(dev, I2C_MEM_CALIB_VALUE, buff, 4))
+		{
+			printf("Fail to write calibration data!\n");
+			exit(1);
+		}
+
+		getCalStat(dev);
+	}
+	else
+	{
+		printf("Invalid params number:\n %s", CMD_1K_CAL_RST.usage1);
+		exit(1);
+	}
+	return OK;
+}
+
+int do10kCal(int argc, char *argv[]);
+const CliCmdType CMD_10K_CAL =
+	{"r10kcal", 2, &do10kCal,
+		"\tr10kcal:		Calibrate one 10k resistor input channel, the calibration must be done in 2 points at min 5k ohms apart\n",
+		"\tUsage:		megabas <id> r10kcal <channel> <value>\n", "",
+		"\tExample:		megabas 0 r10kcal 2 5.0; Calibrate the resistance input on 10k channel #2 on Board #0 at 5.0kOhms\n"};
+
+int do10kCal(int argc, char *argv[])
+{
+	int ch = 0;
+	float val = 0;
+	int dev = 0;
+	u8 buff[4] = {0, 0};
+	u16 raw = 0;
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 5)
+	{
+		ch = atoi(argv[3]);
+		if ( (ch < CHANNEL_NR_MIN) || (ch > ADC_CH_NR_MAX))
+		{
+			printf("ADC channel out of range!\n");
+			exit(1);
+		}
+
+		val = atof(argv[4]);
+		if ( (val < 0) || (val > 60))
+		{
+			printf("10k calibration value out of range!\n");
+			exit(1);
+		}
+		raw = (u16)ceil(val * 1000);
+		memcpy(buff, &raw, 2);
+		buff[2] = ch + CAL_10K_IN_START_ID - 1;
+		buff[3] = CALIBRATION_KEY;
+
+		if (OK != i2cMem8Write(dev, I2C_MEM_CALIB_VALUE, buff, 4))
+		{
+			printf("Fail to write calibration data!\n");
+			exit(1);
+		}
+
+		getCalStat(dev);
+	}
+	else
+	{
+		printf("Invalid params number:\n %s", CMD_10K_CAL.usage1);
+		exit(1);
+	}
+	return OK;
+}
+int do10kCalRst(int argc, char *argv[]);
+const CliCmdType CMD_10K_CAL_RST =
+	{"r10kcalrst", 2, &do10kCalRst,
+		"\tr10kcalrst:	Reset the calibration for one 10k resistor input channel\n",
+		"\tUsage:		megabas <id> r10kcalrst <channel>\n", "",
+		"\tExample:		megabas 0 r10kcalrst 2 ; Reset the calibration on 10k channel #2 on Board #0 at factory default\n"};
+
+int do10kCalRst(int argc, char *argv[])
+{
+	int ch = 0;
+
+	int dev = 0;
+	u8 buff[4] = {0, 0, 0, 0};
+
+	dev = doBoardInit(atoi(argv[1]));
+	if (dev <= 0)
+	{
+		exit(1);
+	}
+
+	if (argc == 4)
+	{
+		ch = atoi(argv[3]);
+		if ( (ch < CHANNEL_NR_MIN) || (ch > ADC_CH_NR_MAX))
+		{
+			printf("ADC channel out of range!\n");
+			exit(1);
+		}
+
+		buff[2] = ch + CAL_10K_IN_START_ID - 1;
+		buff[3] = RESET_CALIBRATION_KEY;
+
+		if (OK != i2cMem8Write(dev, I2C_MEM_CALIB_VALUE, buff, 4))
+		{
+			printf("Fail to write calibration data!\n");
+			exit(1);
+		}
+
+		getCalStat(dev);
+	}
+	else
+	{
+		printf("Invalid params number:\n %s", CMD_10K_CAL_RST.usage1);
+		exit(1);
+	}
+	return OK;
+}
+
 int doDacCal(int argc, char *argv[]);
 const CliCmdType CMD_DAC_CAL =
 	{"daccal", 2, &doDacCal,
@@ -2817,7 +3027,7 @@ int doOwbIdGet(int argc, char *argv[])
 
 	memcpy(&romID, &buff[0], 8);
 
-	printf("0x%lx\n", romID);
+	printf("0x%llx\n", romID);
 	return OK;
 }
 
@@ -3032,7 +3242,7 @@ const CliCmdType *gCmdArray[] = {&CMD_VERSION, &CMD_HELP, &CMD_WAR, &CMD_LIST,
 	&CMD_BOARD, &CMD_RESET, &CMD_TRIAC_WRITE, &CMD_TRIAC_READ, &CMD_TEST, &CMD_LED_WRITE, &CMD_LED_READ, &CMD_CONTACT_READ,
 	&CMD_COUNTER_READ, &CMD_COUNTER_RST, &CMD_EDGE_READ, &CMD_EDGE_WRITE,
 	&CMD_DAC_READ, &CMD_DAC_WRITE, &CMD_ADC_READ, &CMD_R1K_READ, &CMD_R10K_READ,
-	&CMD_ADC_CAL, &CMD_ADC_CAL_RST, &CMD_DAC_CAL, &CMD_DAC_CAL_RST,
+	&CMD_ADC_CAL,&CMD_1K_CAL, &CMD_10K_CAL, &CMD_ADC_CAL_RST,&CMD_1K_CAL_RST, &CMD_10K_CAL_RST, &CMD_DAC_CAL, &CMD_DAC_CAL_RST,
 	&CMD_WDT_RELOAD, &CMD_WDT_SET_PERIOD, &CMD_WDT_GET_PERIOD,
 	&CMD_WDT_SET_INIT_PERIOD, &CMD_WDT_GET_INIT_PERIOD, &CMD_WDT_SET_OFF_PERIOD,
 	&CMD_WDT_GET_OFF_PERIOD, &CMD_RS485_READ, &CMD_RS485_WRITE, &CMD_RTC_GET,
