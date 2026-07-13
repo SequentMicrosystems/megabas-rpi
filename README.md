@@ -10,28 +10,29 @@ This is the command to control [Building Automation Stackable Card for Raspberry
 
 Don't forget to enable I2C communication:
 ```bash
-~$ sudo raspi-config
+sudo raspi-config
 ```
 
 ## Usage
 
 ```bash
-~$ git clone https://github.com/SequentMicrosystems/megabas-rpi.git
-~$ cd megabas-rpi/
-~/megabas-rpi$ sudo make install
+cd
+git clone https://github.com/SequentMicrosystems/megabas-rpi.git
+cd megabas-rpi/
+sudo make install
 ```
 
 Now you can access all the functions of the BAS board through the command "megabas". Use -h option for help:
 ```bash
-~$ megabas -h
+megabas -h
 ```
  ## Update
-If you clone the repository, any update can be made with the following commands:
+If you clone the repository, any updates can be made with the following commands:
 
 ```bash
-~$ cd megabas-rpi/  
-~/megabas-rpi$ git pull
-~/megabas-rpi$ sudo make install
+cd megabas-rpi/  
+git pull
+sudo make install
 ```
 ## Software selectable input type
 
